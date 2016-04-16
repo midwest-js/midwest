@@ -13,16 +13,16 @@ const log = require('./util/log-error');
 const config = require(p.join(PWD, 'server/config/error-handler'));
 
 module.exports = function errorHandler(error, req, res, next) {
-	error = format(error, req);
+  error = format(error, req);
 
-	log(error, req, { format: false });
+  log(error, req, { format: false });
 
-	// limit what properties are sent to the client by overriding toJSON().
-	error.toJSON = function () {
-		return _.pick(this, config.mystify.properties);
-	};
+  // limit what properties are sent to the client by overriding toJSON().
+  error.toJSON = function () {
+    return _.pick(this, config.mystify.properties);
+  };
 
-	res.status(error.status).locals = { error };
+  res.status(error.status).locals = { error };
 
-	next();
+  next();
 };

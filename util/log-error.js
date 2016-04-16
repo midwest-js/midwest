@@ -18,44 +18,44 @@ const prefix = '[' + chalk.red('EE') + ']: ';
 const _config = require(p.join(process.cwd(), 'server/config/error-handler')).log;
 
 function defaultConsole(error) {
-	// note unformatted error will not have any own properties to loop over. ie,
-	// format needs to be called first
-	for (const prop in error) {
-		// TODO pretty print stack
-		if (prop !== 'stack') {
-			console.error(prefix + prop + ': ' + JSON.stringify(error[prop]));
-		}
-	}
+  // note unformatted error will not have any own properties to loop over. ie,
+  // format needs to be called first
+  for (const prop in error) {
+    // TODO pretty print stack
+    if (prop !== 'stack') {
+      console.error(prefix + prop + ': ' + JSON.stringify(error[prop]));
+    }
+  }
 
-	if (error.stack) {
-		console.error(prefix + 'STACK:');
+  if (error.stack) {
+    console.error(prefix + 'STACK:');
 
-		console.error(colorizeStack(error.stack.slice(error.stack.indexOf('\n') + 1)) + '\n');
-	}
+    console.error(colorizeStack(error.stack.slice(error.stack.indexOf('\n') + 1)) + '\n');
+  }
 }
 
 module.exports = function logError(error, req, config) {
-	config = _.defaults(config || {}, _config);
+  config = _.defaults(config || {}, _config);
 
-	if (config.format !== false)
-		error = (_.isFunction(config.format) ? config.format : formatError)(error, req);
+  if (config.format !== false)
+    error = (_.isFunction(config.format) ? config.format : formatError)(error, req);
 
-	let logConsole;
-	let logStore;
+  let logConsole;
+  let logStore;
 
-	if (config.console)
-		logConsole = _.isFunction(config.console) ? config.console : defaultConsole;
+  if (config.console)
+    logConsole = _.isFunction(config.console) ? config.console : defaultConsole;
 
-	if (_.isFunction(config.store))
-		logStore = config.store;
+  if (_.isFunction(config.store))
+    logStore = config.store;
 
-	if (config.ignore.indexOf(error.status) < 0) {
-		if (logConsole) {
-			logConsole(error);
-		}
+  if (config.ignore.indexOf(error.status) < 0) {
+    if (logConsole) {
+      logConsole(error);
+    }
 
-		if (logStore) {
-			logStore(error);
-		}
-	}
+    if (logStore) {
+      logStore(error);
+    }
+  }
 };
