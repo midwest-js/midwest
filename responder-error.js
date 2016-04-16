@@ -12,7 +12,7 @@ module.exports = function responderError(err, req, res, next) {
   if (res.locals.error) {
     console.error('[!!!] ERROR IN RESPONDER, ORIGINAL ERROR');
 
-    logError(res.locals.error, { store: false });
+    logError(res.locals.error, req, { format: false, store: false });
   }
   res.send((res.locals.error || err) + '');
 };
