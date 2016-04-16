@@ -24,7 +24,7 @@ module.exports = function responder(req, res) {
       res.json(keys.length === 1 && keys[0] !== 'page' ? res.locals[keys[0]] : _.omit(res.locals, 'query'));
     },
 
-    default() {
+    '*/*'() {
       debug('Cannot find suitable ACCEPTS, returning status');
 
       res.sendStatus(res.statusCode || 406);
