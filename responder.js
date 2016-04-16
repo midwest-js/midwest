@@ -5,7 +5,7 @@ const _ = require('lodash');
 const debug = require('debug')('warepot:responder');
 
 module.exports = function responder(req, res) {
-  const formats = {
+  res.format({
     html() {
       debug('ACCEPTS html, returning html');
 
@@ -29,7 +29,5 @@ module.exports = function responder(req, res) {
 
       res.sendStatus(res.statusCode || 406);
     }
-  };
-
-  res.format(formats);
+  });
 };
