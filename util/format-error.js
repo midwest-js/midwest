@@ -43,11 +43,16 @@ module.exports = function (error, req) {
   if (error.name === 'ValidationError') {
     err.status = 422;
 
-    err.errors = _.map(error.errors, 'message');
+    err.details = _.assignIn(err.details, { validationErrors: _.map(error.errors, 'message') });
+
+    delete err.errors;
   }
 
   if (err.status >= 500) {
     _.defaults(err, parseFileLocation(err.stack));
+
+    if (req)
+      err.session = req.session;
   } else {
     delete err.stack;
   }
