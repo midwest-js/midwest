@@ -17,7 +17,7 @@ const _filters = {
   }
 };
 
-module.exports = function (properties, filters) {
+module.exports = function (properties, filters, transform) {
   properties = _.union(properties, _.keys(filters));
 
   filters = _.mapValues(filters, function (value) {
@@ -32,6 +32,8 @@ module.exports = function (properties, filters) {
 
       return filters[key] ? filters[key](value) : value;
     });
+
+    if (transform instanceof Function) req.query = transform(req.query);
 
     next();
   };
