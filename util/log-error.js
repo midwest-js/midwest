@@ -13,24 +13,35 @@ const colorizeStack = require('./colorize-stack');
 const formatError = require('./format-error');
 
 // string added to all errors logged to console
-const prefix = '[' + chalk.red('EE') + ']: ';
+const prefix = '[' + chalk.red('EE') + '] ';
 
 const _config = require(p.join(process.cwd(), 'server/config/error-handler')).log;
 
 function defaultConsole(error) {
   // note unformatted error will not have any own properties to loop over. ie,
   // format needs to be called first
-  for (const prop in error) {
-    // TODO pretty print stack
-    if (prop !== 'stack') {
-      console.error(prefix + prop + ': ' + JSON.stringify(error[prop]));
-    }
+  let status;
+  let message;
+  if (error.status < 400) {
+    status = chalk.cyan(error.status);
+  } else if (error.status < 500) {
+    status = chalk.yellow(error.status);
+  } else {
+    status = chalk.red(error.status);
+    message = '[' + error.name + '] ' + error.message;
   }
+  status = chalk.bold(status);
+
+  console.error(prefix + status + ' ' + (message ||  error.message));
+  //for (const prop in error) {
+  //  // TODO pretty print stack
+  //  if (prop !== 'stack') {
+  //    console.error(prefix + prop + ': ' + JSON.stringify(error[prop]));
+  //  }
+  //}
 
   if (error.stack) {
-    console.error(prefix + 'STACK:');
-
-    console.error(colorizeStack(error.stack.slice(error.stack.indexOf('\n') + 1)) + '\n');
+    console.error(prefix + colorizeStack(error.stack.slice(error.stack.indexOf('\n') + 1)).trim() + '\n');
   }
 }
 
