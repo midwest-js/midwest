@@ -6,12 +6,6 @@ const debug = require('debug')('warepot:responder');
 
 module.exports = function responder(req, res) {
   res.format({
-    html() {
-      debug('ACCEPTS html, returning html');
-
-      res.render(res.template || res.master);
-    },
-
     json() {
       debug('ACCEPTS json, returning json');
 
@@ -25,9 +19,9 @@ module.exports = function responder(req, res) {
     },
 
     '*/*'() {
-      debug('Cannot find suitable ACCEPTS, returning status');
+      debug('ACCEPTS html, returning html');
 
-      res.sendStatus(res.statusCode || 406);
+      res.render(res.template || res.master);
     }
   });
 };
