@@ -30,9 +30,13 @@ function defaultConsole(error) {
     status = chalk.red(error.status);
     message = '[' + error.name + '] ' + error.message;
   }
+
   status = chalk.bold(status);
 
-  console.error(prefix + status + ' ' + (message ||  error.message));
+  console.error(prefix + status + ' ' + (message || error.message));
+  if (error.status === 422) {
+    console.error(prefix + 'details: ' + error.details);
+  }
   //for (const prop in error) {
   //  // TODO pretty print stack
   //  if (prop !== 'stack') {
