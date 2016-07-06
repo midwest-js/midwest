@@ -21,6 +21,8 @@ module.exports = function responder(req, res) {
     '*/*'() {
       debug('ACCEPTS html, returning html');
 
+      res.set('Content-Type', 'text/html');
+
       res.render(res.template || res.master);
     }
   });
