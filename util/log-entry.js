@@ -13,7 +13,7 @@ const _config = require(p.join(process.cwd(), 'server/config/logger'));
 
 const logError = require('./log-error');
 
-const LogEntry = require('../models/log-entry');
+const LogEntry = require('mongopot/models/log-entry');
 
 module.exports = function logEntry(message, req, config) {
   config = _.defaults(config || {}, _config);
