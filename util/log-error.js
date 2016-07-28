@@ -35,7 +35,7 @@ function defaultConsole(error) {
 
   console.error(prefix + status + ' ' + (message || error.message));
   if (error.status === 422) {
-    console.error(prefix + 'details: ' + error.details);
+    console.error(prefix + 'details: ' + JSON.stringify(error.details, null, '  '));
   }
   //for (const prop in error) {
   //  // TODO pretty print stack
