@@ -18,11 +18,15 @@ module.exports = function errorHandler(error, req, res, next) {
   log(error, req, { format: false });
 
   // limit what properties are sent to the client by overriding toJSON().
-  error.toJSON = function () {
-    return _.pick(this, config.mystify.properties);
-  };
+  if (req.isAdmin && !req.isAdmin())
+    error.toJSON = function () {
+      return _.pick(this, config.mystify.properties);
+    };
 
   res.status(error.status).locals = { error };
 
-  next();
+  if (config.post)
+    config.post(req, res, next);
+  else
+    next();
 };
