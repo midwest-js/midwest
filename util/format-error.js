@@ -2,6 +2,7 @@
 
 // modules > native
 const http = require('http');
+const p = require('path');
 
 // modules > 3rd party
 const _ = require('lodash');
@@ -14,6 +15,8 @@ function parseFileLocation(stack) {
     return _.zipObject(['fileName', 'lineNumber', 'columnNumber'],
       _.tail(stack.match(fileLocationPattern)));
 }
+
+const config = require(p.join(process.cwd(), 'server/config/error-handler'));
 
 module.exports = function (error, req) {
   // pick all important properties on Error prototype and any
@@ -36,7 +39,7 @@ module.exports = function (error, req) {
 
     err.xhr = req.xhr;
 
-    if (!_.isEmpty(req.body)) err.body = req.body;
+    if (!_.isEmpty(req.body)) err.body = _.mapKeys(req.body, (value, key) => key.replace('.', 'DOT'));;
     if (!_.isEmpty(req.query)) err.query = req.query;
   }
 
@@ -44,15 +47,15 @@ module.exports = function (error, req) {
     err.status = 422;
 
     err.details = _.assignIn(err.details, { validationErrors: _.map(error.errors, 'message') });
-
+ 
     delete err.errors;
   }
 
-  if (err.status >= 500) {
+  if (config.log.all || err.status >= 500) {
     _.defaults(err, parseFileLocation(err.stack));
 
-    if (req)
-      err.session = req.session;
+    //if (req)
+    //  err.session = req.session;
   } else {
     delete err.stack;
   }

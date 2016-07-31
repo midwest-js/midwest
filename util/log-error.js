@@ -22,9 +22,9 @@ function defaultConsole(error) {
   // format needs to be called first
   let status;
   let message;
-  if (error.status < 400) {
+  if (!_config.all && error.status < 400) {
     status = chalk.cyan(error.status);
-  } else if (error.status < 500) {
+  } else if (!_config.all && error.status < 500) {
     status = chalk.yellow(error.status);
   } else {
     status = chalk.red(error.status);
