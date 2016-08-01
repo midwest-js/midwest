@@ -56,7 +56,8 @@ module.exports = function (error, req) {
 
     err.xhr = req.xhr;
 
-    if (!_.isEmpty(req.body)) err.body = _.mapKeys(req.body, (value, key) => key.replace('.', 'DOT'));;
+    // We mapKeys because Mongo does not allow keys with dots stored to DB.
+    if (!_.isEmpty(req.body)) err.body = _.mapKeys(req.body, (value, key) => key.replace('.', 'DOT'));
     if (!_.isEmpty(req.query)) err.query = req.query;
   }
 
@@ -64,7 +65,7 @@ module.exports = function (error, req) {
     err.status = 422;
 
     err.details = _.assignIn(err.details, { validationErrors: _.map(error.errors, 'message') });
- 
+
     delete err.errors;
   }
 

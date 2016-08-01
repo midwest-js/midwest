@@ -18,10 +18,10 @@ const _ = require('lodash');
  */
 module.exports = function initRoutes(express, routes) {
   _.each(routes, (route) => {
-    if (_.isArray(route) && _.isString(route[0])) {
-      const path = route[0];
-      const method = route[1] || 'use';
-      const middleware = route[2];
+    if (_.isFunction(route)) {
+      express.use(route);
+    } else if (_.isArray(route)) {
+      const [ path, method, middleware ] = route;
 
       if (!_.isFunction(middleware) && (_.isEmpty(middleware) || _.some(middleware, (value) => !_.isFunction(value)))) {
         throw new Error('Undefined or non-function as middleware for [' + method + ']:' + path);
@@ -29,7 +29,7 @@ module.exports = function initRoutes(express, routes) {
 
       express[method](path, middleware);
     } else {
-      express.use(route);
+      throw new Error('Route is not an Array or Function.');
     }
   });
 };
