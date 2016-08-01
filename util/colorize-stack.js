@@ -1,3 +1,9 @@
+/*
+ * Handy little util function that highlights all files in the stack trace not
+ * in the node_modules/ folder.
+ *
+ * @module warepot/util/colorize-stack
+ */
 'use strict';
 
 // modules > native
@@ -6,6 +12,13 @@ const p = require('path');
 // modules > 3rd party
 const chalk = require('chalk');
 
+/*
+ * Colorizes a stack trace.
+ *
+ * {String} - String
+ *
+ * @returns A colored string of the stack trace
+ */
 module.exports = function (stack) {
   if (!stack) return;
 

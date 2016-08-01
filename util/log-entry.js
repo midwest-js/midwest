@@ -1,3 +1,13 @@
+/*
+ * Module that logs log entries to console
+ * and/or database.
+ *
+ * This module expects a config file located
+ * at `server/config/logger`.
+ *
+ * @module warepot/util/log-entry
+ */
+
 'use strict';
 
 // modules > native
@@ -15,6 +25,13 @@ const logError = require('./log-error');
 
 const LogEntry = require('mongopot/models/log-entry');
 
+/*
+ * @param {string} message - The message to be logged
+ * @param {IncomingMessage} req - The request object. Is needed to collected
+ * data about the request
+ * @param {Object} config - Optional config object to override the default
+ * config on a per log basis.
+ */
 module.exports = function logEntry(message, req, config) {
   config = _.defaults(config || {}, _config);
 

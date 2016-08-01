@@ -1,3 +1,11 @@
+/* Middleware that handles errors in responder.
+ *
+ * Needs to be placed right after responder
+ *
+ * @module warepot/responder-error
+ *
+ * @see module:warepot/responder
+ */
 'use strict';
 
 const logError = require('./util/log-error');

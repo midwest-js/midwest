@@ -1,3 +1,13 @@
+/*
+ * Ensures something has been found during the request.
+ * Returns 404 if res.locals is empty and res.template is unset.
+ *
+ * Should be placed at the very end of the middleware pipeline,
+ * after all project specific routes but before the error handler.
+ *
+ * @module warepot/ensure-found
+ */
+
 'use strict';
 
 const _ = require('lodash');

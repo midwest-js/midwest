@@ -1,3 +1,13 @@
+/*
+ * Module that logs errors to console
+ * and/or database.
+ *
+ * This module expects a config file located
+ * at `server/config/error-handler`.
+ *
+ * @module warepot/util/log-error
+ */
+
 'use strict';
 
 const _ = require('lodash');
@@ -17,6 +27,12 @@ const prefix = '[' + chalk.red('EE') + '] ';
 
 const _config = require(p.join(process.cwd(), 'server/config/error-handler')).log;
 
+/*
+ * Default console logging function. Will be used
+ * if `config.console` is not set or is not a function.
+ *
+ * @private
+ */
 function defaultConsole(error) {
   // note unformatted error will not have any own properties to loop over. ie,
   // format needs to be called first
@@ -49,6 +65,15 @@ function defaultConsole(error) {
   }
 }
 
+/*
+ * Logs the error.
+ *
+ * @param {Error} error - Error to be logged
+ * @param {IncomingMessage} req - Request object of current request.
+ * Used to add additional info to error such as logged in user.
+ * @param {Object} config - Optional config object to override the default
+ * config on a per log basis.
+ */
 module.exports = function logError(error, req, config) {
   config = _.defaults(config || {}, _config);
 

@@ -1,7 +1,18 @@
+/* Middleware that helps pagination
+ *
+ * @module warepot/paginate
+ */
 'use strict';
 
 const _ = require('lodash');
 
+/* Middleware factory
+ *
+ * @param {mongoose.Model} Model - Model that will be paginated
+ * @param {Number} perPage - Number of results per page
+ *
+ * @return A middleware function
+ */
 module.exports = function (Model, perPage) {
   perPage = perPage || 20;
 

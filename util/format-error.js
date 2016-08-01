@@ -1,3 +1,8 @@
+/*
+ * Formats errors
+ *
+ * @module warepot/util/format-error
+ */
 'use strict';
 
 // modules > native
@@ -10,6 +15,9 @@ const debug = require('debug')('warepot:errorHandler');
 
 const fileLocationPattern = new RegExp(process.cwd() + '\\/([\\/\\w-_\\.]+\\.js):(\\d*):(\\d*)');
 
+/*
+ * @private
+ */
 function parseFileLocation(stack) {
   if (_.isString(stack))
     return _.zipObject(['fileName', 'lineNumber', 'columnNumber'],
@@ -18,6 +26,15 @@ function parseFileLocation(stack) {
 
 const config = require(p.join(process.cwd(), 'server/config/error-handler'));
 
+/*
+ * Formats an error and converts it to a plain object.
+ *
+ * @param {Error} error - Error to be logged
+ * @param {IncomingMessage} req - Request object of current request.
+ * Used to add additional info to error such as logged in user.
+ *
+ * @returns The formatted error as a plain object.
+ */
 module.exports = function (error, req) {
   // pick all important properties on Error prototype and any
   // own properties

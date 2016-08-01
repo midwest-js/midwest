@@ -1,3 +1,12 @@
+/*
+ * The responder. Should handle sending response for most routes,
+ * including errored requests.
+ *
+ * Will send `res.locals` as JSON if JSON is requested, otherwise
+ * it will render res.template (with res.locals, obviously).
+ *
+ * @module warepot/responder
+ */
 'use strict';
 
 // modules > 3rd party

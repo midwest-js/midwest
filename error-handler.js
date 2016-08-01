@@ -1,3 +1,9 @@
+/*
+ * Error handling middleware
+ *
+ * @see module:warepot/util/format-error
+ * @see module:warepot/util/log-error
+ */
 'use strict';
 
 // modules > native
