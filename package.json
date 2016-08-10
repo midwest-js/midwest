@@ -1,6 +1,6 @@
 {
   "name": "warepot",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A collection of middleware for Connect or Express apps.",
   "main": "index.js",
   "scripts": {
