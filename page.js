@@ -1,9 +1,9 @@
 /*
  * @module warepot/page
  */
-'use strict';
+'use strict'
 
-const _ = require('lodash');
+const _ = require('lodash')
 
 /*
  * Middleware factory
@@ -22,13 +22,13 @@ module.exports = function (page, navigation) {
     res.locals.page = _.defaults({
       routePath: page.path,
       path: req.path
-    }, page);
+    }, page)
 
     if (!req.xhr) {
-      res.locals.user = req.user;
-      res.locals.navigation = navigation;
+      res.locals.user = req.user
+      res.locals.navigation = navigation
     }
 
-    next();
-  }, 'name', { value: 'page' });
-};
+    next()
+  }, 'name', { value: 'page' })
+}

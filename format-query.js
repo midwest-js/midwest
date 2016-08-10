@@ -3,24 +3,24 @@
  *
  * @module warepot/format-query
  */
-'use strict';
+'use strict'
 
-const _ = require('lodash');
+const _ = require('lodash')
 
-const evals = [ 'undefined', 'null', 'false', 'true' ];
+const evals = [ 'undefined', 'null', 'false', 'true' ]
 
 const _filters = {
   regex(value) {
-    return new RegExp(value, 'i');
+    return new RegExp(value, 'i')
   },
 
   exists(value) {
     if (value === true)
-      return { $ne: null };
+      return { $ne: null }
 
-    return { $eq: null };
+    return { $eq: null }
   }
-};
+}
 
 /*
  * Middleware factory.
@@ -34,24 +34,24 @@ const _filters = {
  * @return A middleware function
  */
 module.exports = function (properties, filters, transform) {
-  properties = _.union(properties, _.keys(filters));
+  properties = _.union(properties, _.keys(filters))
 
   filters = _.mapValues(filters, function (value) {
-    return _.isString(value) ? _filters[value] : value;
-  });
+    return _.isString(value) ? _filters[value] : value
+  })
 
   // return the actual middleware function
   return function (req, res, next) {
     req.query = _.mapValues(_.pick(req.query, properties), function (value, key) {
-      value = decodeURIComponent(value);
+      value = decodeURIComponent(value)
 
-      if (evals.indexOf(value) > -1) value = eval(value);
+      if (evals.indexOf(value) > -1) value = eval(value)
 
-      return filters[key] ? filters[key](value) : value;
-    });
+      return filters[key] ? filters[key](value) : value
+    })
 
-    if (transform instanceof Function) req.query = transform(req.query);
+    if (transform instanceof Function) req.query = transform(req.query)
 
-    next();
-  };
-};
+    next()
+  }
+}

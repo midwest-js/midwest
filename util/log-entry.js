@@ -8,22 +8,22 @@
  * @module warepot/util/log-entry
  */
 
-'use strict';
+'use strict'
 
 // modules > native
-const p = require('path');
+const p = require('path')
 
 // modules > 3rd party
-const chalk = require('chalk');
+const chalk = require('chalk')
 
 // string added to all errors logged to console
-const prefix = '[' + chalk.blue('LL') + ']: ';
+const prefix = '[' + chalk.blue('LL') + ']: '
 
-const _config = require(p.join(process.cwd(), 'server/config/logger'));
+const _config = require(p.join(process.cwd(), 'server/config/logger'))
 
-const logError = require('./log-error');
+const logError = require('./log-error')
 
-const LogEntry = require('mongopot/models/log-entry');
+const LogEntry = require('mongopot/models/log-entry')
 
 /*
  * @param {string} message - The message to be logged
@@ -33,12 +33,12 @@ const LogEntry = require('mongopot/models/log-entry');
  * config on a per log basis.
  */
 module.exports = function logEntry(message, req, config) {
-  config = _.defaults(config || {}, _config);
+  config = _.defaults(config || {}, _config)
 
-  const date = new Date();
+  const date = new Date()
 
   if (config.console) {
-    console.log(prefix + '[' + chalk.cyan(date) + '] ' + message);
+    console.log(prefix + '[' + chalk.cyan(date) + '] ' + message)
   }
 
   if (config.database) {
@@ -49,8 +49,8 @@ module.exports = function logEntry(message, req, config) {
     }, function (err) {
       // TODO handle errors in error handler better
       if (err) {
-        logError(err);
+        logError(err)
       }
-    });
+    })
   }
-};
+}

@@ -5,21 +5,21 @@
  * @module warepot/get-languages
  */
 
-'use strict';
+'use strict'
 
-const p = require('path');
-const fs = require('fs');
+const p = require('path')
+const fs = require('fs')
 
-const fileName = p.join(process.cwd(), 'server/config/languages.js');
+const fileName = p.join(process.cwd(), 'server/config/languages.js')
 
-let languages;
+let languages
 
 if (fs.existsSync(fileName)) {
-  languages = _.map(require(fileName), (val) => val);
+  languages = _.map(require(fileName), (val) => val)
 }
 
 module.exports = function (req, res, next) {
-  res.locals.languages = languages;
+  res.locals.languages = languages
 
-  next();
-};
+  next()
+}

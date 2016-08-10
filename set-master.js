@@ -3,7 +3,7 @@
  *
  * @module warepot/set-master
  */
-'use strict';
+'use strict'
 
 /* Middleware factory
  *
@@ -13,7 +13,7 @@
  */
 module.exports = function (master) {
   return function setMaster(req, res, next) {
-    res.master = master;
-    next();
-  };
-};
+    res.master = master
+    next()
+  }
+}

@@ -4,10 +4,10 @@
  * @module warepot/util/initRoutes
  */
 
-'use strict';
+'use strict'
 
 // modules > 3rd party
-const _ = require('lodash');
+const _ = require('lodash')
 
 /*
  * Initializes an array of routes on an express instance
@@ -19,17 +19,17 @@ const _ = require('lodash');
 module.exports = function initRoutes(express, routes) {
   _.each(routes, (route) => {
     if (_.isFunction(route)) {
-      express.use(route);
+      express.use(route)
     } else if (_.isArray(route)) {
-      const [ path, method, middleware ] = route;
+      const [ path, method, middleware ] = route
 
       if (!_.isFunction(middleware) && (_.isEmpty(middleware) || _.some(middleware, (value) => !_.isFunction(value)))) {
-        throw new Error('Undefined or non-function as middleware for [' + method + ']:' + path);
+        throw new Error('Undefined or non-function as middleware for [' + method + ']:' + path)
       }
 
-      express[method](path, middleware);
+      express[method](path, middleware)
     } else {
-      throw new Error('Route is not an Array or Function.');
+      throw new Error('Route is not an Array or Function.')
     }
-  });
-};
+  })
+}
