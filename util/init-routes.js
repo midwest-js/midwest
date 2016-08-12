@@ -21,26 +21,24 @@ module.exports = function initRoutes(express, routes) {
     if (_.isFunction(route)) {
       express.use(route)
     } else if (_.isArray(route)) {
-      let [ path, method, middleware ] = route
+      let [ path, method, ...middleware ] = route
 
-      if (_.isArray(middleware)) {
-        middleware = middleware.map((mw) => {
-          if (_.isArray(mw)) {
-            return (req, res, next) => {
-              next = _.after(mw.length, next)
+      if (_.isEmpty(middleware))
+        throw new Error('No middleware defined for [' + method + ']:' + path)
 
-              mw.forEach(mw => mw(req, res, next))
-            }
+      middleware = middleware.map((mw) => {
+        if (_.isArray(mw)) {
+          return (req, res, next) => {
+            next = _.after(mw.length, next)
+
+            mw.forEach(mw => mw(req, res, next))
           }
+        } else if (!_.isFunction(mw)) {
+          throw new Error('Undefined or non-function middleware found [' + method + ']:' + path)
+        }
 
-          return mw
-        })
-      }
-
-      if (!_.isFunction(middleware) && (_.isEmpty(middleware) || _.some(middleware, (value) => !_.isFunction(value)))) {
-        throw new Error('Undefined or non-function as middleware for [' + method + ']:' + path)
-      }
-
+        return mw
+      })
 
       express[method](path, middleware)
     } else {
