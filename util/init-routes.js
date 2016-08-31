@@ -40,7 +40,9 @@ module.exports = function initRoutes(express, routes) {
         return mw
       })
 
-      express[method](path, middleware)
+      // use spread operator so it works with `express.param` (which only accepts
+      // a single function, not an array of fncs)
+      express[method](path, ...middleware)
     } else {
       throw new Error('Route is not an Array or Function.')
     }
