@@ -16,7 +16,7 @@ be used instead of `express[method]`.
 
 An example route file could look like so:
 
-```
+```js
 'use strict'
 
 const mw = require('./middleware')
@@ -33,7 +33,7 @@ module.exports = [
 
 A simple example `server/server.js`:
 
-```
+```js
 'use strict'
 
 const bodyParser = require('body-parser')
@@ -100,7 +100,7 @@ parts are currently:
 
 If you have 
 
-```
+```js
 module.exports = [
   [ '/api/users/me', mw.getCurrent ],
   [ '/api/users/:id', isAdmin, mw.findById ]
