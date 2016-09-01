@@ -2,8 +2,9 @@
 
 ## Usage
 
-Warepot kind of rapes Express. It does especially routes
-in a very non-standard ways.
+Warepot is a collection of middleware & utilities for Express. Through
+the `initRoutes` utility it also enables one to structure routes very differently
+from standard Express.
 
 The main concept behind warepot is the concept of the responder middleware.
 Basically no other middleware should be sending the response, they should simply
