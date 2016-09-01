@@ -98,7 +98,10 @@ parts are currently:
 
 ### Static routes also matching dynamic routes
 
-If you have 
+Since no middleware except the responder should be sending the response,
+dynamic routes that match static routes will clash.
+
+Ie. if you have 
 
 ```js
 module.exports = [
