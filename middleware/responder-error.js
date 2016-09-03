@@ -8,7 +8,7 @@
  */
 'use strict'
 
-const logError = require('./util/log-error')
+const logError = require('../util/log-error')
 
 module.exports = function responderError(err, req, res, next) {
   // TODO maybe tag or name this error so it is easy to find responder errors.

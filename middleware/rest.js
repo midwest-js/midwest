@@ -14,7 +14,6 @@ module.exports = (Model) => {
     Model.create(req.body, (err, doc) => {
       if (err) return next(err)
 
-
       res.set('Location', req.url + '/' + doc._id)
         .status(201)
         .locals[singular] = doc

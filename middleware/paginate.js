@@ -16,6 +16,9 @@ const _ = require('lodash')
 module.exports = function (Model, perPage) {
   perPage = perPage || 20
 
+
+
+
   return function (req, res, next) {
     //res.locals.query = req.url.slice(req.url.indexOf('?')).slice(1)
     res.locals.query = req.query

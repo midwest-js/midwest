@@ -13,8 +13,8 @@ const p = require('path')
 const _ = require('lodash')
 
 // modules > internal
-const format = require('./util/format-error')
-const log = require('./util/log-error')
+const format = require('../util/format-error')
+const log = require('../util/log-error')
 
 const config = require(p.join(PWD, 'server/config/error-handler'))
 
