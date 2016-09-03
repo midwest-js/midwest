@@ -1,29 +1,33 @@
 {
-  "name": "warepot",
-  "version": "0.0.4",
-  "description": "A collection of middleware for Connect or Express apps.",
-  "main": "index.js",
+  "name": "midwest",
+  "version": "0.0.0",
+  "description": "Midwest Express is a collection of middleware and utils for Express. Kind of a modular CMS built on top of Express",
+  "main": "midwest.js",
   "scripts": {
+    "lint": "eslint midwest.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lohfu/warepot.git"
+    "url": "git+https://github.com/thebitmill/midwest.git"
   },
   "keywords": [
     "middleware",
     "express",
-    "connect"
+    "bitmill"
   ],
   "author": "Linus Miller <lohfu@lohfu.io> (https://lohfu.io/)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lohfu/warepot/issues"
+    "url": "https://github.com/thebitmill/midwest/issues"
   },
-  "homepage": "https://github.com/lohfu/warepot#readme",
+  "homepage": "https://github.com/thebitmill/midwest#readme",
   "dependencies": {
     "chalk": "^1.1.3",
     "debug": "^2.2.0",
-    "lodash": "^4.14.2"
+    "lodash": "^4.14.2",
+    "express": "^4.14.0",
+    "marko": "^3.10.0",
+    "warepot": "0.0.4"
   }
 }

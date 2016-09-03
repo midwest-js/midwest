@@ -1,12 +1,12 @@
-# Warepot
+# Midwest Express
 
 ## Usage
 
-Warepot is a collection of middleware & utilities for Express. Through
+Midwest Express is a collection of middleware & utilities for Express. Through
 the `initRoutes` utility it also enables one to structure routes very differently
 from standard Express.
 
-The main concept behind warepot is the concept of the responder middleware.
+The main concept behind Midwest is the concept of the responder middleware.
 Basically no other middleware should be sending the response, they should simply
 call `next()` until the responder is reached. The responder then either
 send the contents of `res.locals` as JSON, or renders a template.
@@ -39,7 +39,7 @@ A simple example `server/server.js`:
 
 const bodyParser = require('body-parser')
 const express = require('express')
-const initRoutes = require('warepot/util/init-routes')
+const initRoutes = require('midwest/util/init-routes')
 
 const server = express()
 
@@ -50,13 +50,13 @@ const prewares = [
 ]
 
 const postwares = [
-  require('warepot/ensure-found'),
+  require('midwest/middleware/ensure-found'),
   // transform and log error
-  require('warepot/error-handler'),
+  require('midwest/middleware/error-handler'),
   // respond
-  require('warepot/responder'),
+  require('midwest/middleware/responder'),
   // handle error in responder
-  require('warepot/responder-error'),
+  require('midwest/middleware/responder-error'),
 ]
 
 const routes = [
@@ -85,15 +85,15 @@ and edited to suit your needs.
 
 ## Debugging
 
-Warepot (and most other server-side modules from TCB) uses the excellent
+Midwest Express (and many, many other modules in NPM) uses the excellent
 [Debug](https://github.com/visionmedia/debug) plugin.
 
-To debug everything, simply set `DEBUG=warepot` as an environment variable. To
-debug specific parts, set (for example) `DEBUG=warepot:responder`. Debuggable
+To debug everything, simply set `DEBUG=midwest` as an environment variable. To
+debug specific parts, set (for example) `DEBUG=midwest:responder`. Debuggable
 parts are currently:
 
-- warepot:errorhandler
-- warepot:responder
+- midwest:errorhandler
+- midwest:responder
 
 ## Caveats
 
