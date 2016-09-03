@@ -1,10 +1,29 @@
 # Midwest Express
 
-## Usage
+Midwest Express is a collection of middleware & utilities for Express.  Midwest
+could be seen as a moduler, opt-in CMS using Express and a KISS (Keep It Simple
+Stupid) philosophy.
 
-Midwest Express is a collection of middleware & utilities for Express. Through
-the `initRoutes` utility it also enables one to structure routes very differently
-from standard Express.
+## Rendering
+
+One of the most important parts of a Midwest setup is to override the default
+Express response rendering functionality. Instead of passing a view/template
+name as a string to `res.render()` or `app.render()`, one must pass an object with
+a render method. The second arguement of this shall be the response (or any
+other writeable stream).
+
+```
+server.response.render = function (template) { const locals = _.extend({}, server.locals, this.locals)
+  const locals = Object.assign({}, server.locals, this.locals)
+
+  template.render(locals, this)
+}
+```
+
+## Route Arrays
+
+Through the `initRoutes` utility Midwest also enables one to structure routes very
+differently from standard Express.
 
 The main concept behind Midwest is the concept of the responder middleware.
 Basically no other middleware should be sending the response, they should simply
