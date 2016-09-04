@@ -9,6 +9,9 @@
 // modules > 3rd party
 const _ = require('lodash')
 
+// modules > midwest
+const parallel = require('../middleware/parallel')
+
 /*
  * Initializes an array of routes on an express instance
  *
@@ -28,11 +31,7 @@ module.exports = function initRoutes(router, routes) {
 
       middleware = middleware.map((mw) => {
         if (_.isArray(mw)) {
-          return (req, res, next) => {
-            next = _.after(mw.length, next)
-
-            mw.forEach(mw => mw(req, res, next))
-          }
+          return parallel(mw)
         } else if (!_.isFunction(mw)) {
           throw new Error('Undefined or non-function middleware found [' + method + ']:' + path)
         }
