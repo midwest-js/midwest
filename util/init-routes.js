@@ -12,14 +12,14 @@ const _ = require('lodash')
 /*
  * Initializes an array of routes on an express instance
  *
- * @param {Object} express Express instance to set up routes on
+ * @param {Object} router Router or Express instance to set up routes on
  * @param {Array[]} routes Array of routes. Either just a function or array (`[ path, method, middleware ]`, or `[ path, metod, [ mw1, mw2 ] ]`)
  * @returns {undefined}
  */
-module.exports = function initRoutes(express, routes) {
+module.exports = function initRoutes(router, routes) {
   _.each(routes, (route) => {
     if (_.isFunction(route)) {
-      express.use(route)
+      router.use(route)
     } else if (_.isArray(route)) {
       let [ path, method, ...middleware ] = route
 
@@ -40,9 +40,9 @@ module.exports = function initRoutes(express, routes) {
         return mw
       })
 
-      // use spread operator so it works with `express.param` (which only accepts
+      // use spread operator so it works with `router.param` (which only accepts
       // a single function, not an array of fncs)
-      express[method](path, ...middleware)
+      router[method](path, ...middleware)
     } else {
       throw new Error('Route is not an Array or Function.')
     }
