@@ -14,7 +14,7 @@ const _ = require('lodash')
 const debug = require('debug')('warepot:responder')
 
 module.exports = function responder(req, res) {
-  function sendJSON(res) {
+  function sendJSON() {
     const keys = Object.keys(res.locals)
 
     /* if there is only a single property on `res.locals` and it is not a page
@@ -36,8 +36,8 @@ module.exports = function responder(req, res) {
       html() {
         debug('ACCEPTS html, returning html')
 
-        if (res.template || res.master)
-          return res.render(res.template || res.master)
+        if (res.template)
+          return res.render(res.template)
 
         res.send('<pre>' + JSON.stringify(res.locals, null, '  ') + '</pre>')
       },
@@ -50,7 +50,7 @@ module.exports = function responder(req, res) {
 
           res.set('Content-Type', 'text/html')
 
-          return res.render(res.template || res.master)
+          return res.render(res.template)
         }
 
         debug('res.template not set, sending JSON.')
