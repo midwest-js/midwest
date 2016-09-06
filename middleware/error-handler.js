@@ -16,7 +16,7 @@ const _ = require('lodash')
 const format = require('../util/format-error')
 const log = require('../util/log-error')
 
-const config = require(p.join(PWD, 'server/config/error-handler'))
+const config = require(p.join(process.cwd(), 'server/config/error-handler'))
 
 module.exports = function errorHandler(error, req, res, next) {
   error = format(error, req)
