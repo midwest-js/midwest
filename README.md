@@ -4,94 +4,39 @@ Midwest Express is a collection of middleware & utilities for Express.  Midwest
 could be seen as a moduler, opt-in CMS using Express and a KISS (Keep It Simple
 Stupid) philosophy.
 
-## Rendering
+1. Global responder middleware
+2. No views, use renderable objects instead
+3. All data to be sent should be set on `res.locals`
 
-One of the most important parts of a Midwest setup is to override the default
-Express response rendering functionality. Instead of passing a view/template
-name as a string to `res.render()` or `app.render()`, one must pass an object with
-a render method. The second arguement of this shall be the response (or any
-other writeable stream).
+There is no installer or abstraction layer. Using Midwest Express is simply
+following a recommended way to structure an Express app. The app is built manually
+and you use the tools and middleware you find suitable for your project.
 
-```
-server.response.render = function (template) { const locals = _.extend({}, server.locals, this.locals)
-  const locals = Object.assign({}, server.locals, this.locals)
-
-  template.render(locals, this)
-}
-```
-
-## Route Arrays
-
-Through the `initRoutes` utility Midwest also enables one to structure routes very
-differently from standard Express.
+## Global Responder Middleware
 
 The main concept behind Midwest is the concept of the responder middleware.
 Basically no other middleware should be sending the response, they should simply
 call `next()` until the responder is reached. The responder then either
 send the contents of `res.locals` as JSON, or renders a template.
 
-Essentially routes should just be arrays of `[ path, method, ...middleware ]`.
-If the array only consists of functions (middleware), then `express.use` will
-be used instead of `express[method]`.
+[./doc/responder.md](Read more)
 
-An example route file could look like so:
+## Rendering
 
-```js
-'use strict'
+One of the most important parts of using a Midwest Express workflow is to
+override the default Express response rendering functionality. Instead of
+passing a view/template name as a string to `res.render()` or `app.render()`,
+one must pass an object with a render method. The second arguement of this
+shall be the response (or any other writeable stream).
 
-const mw = require('./middleware')
-
-module.exports = [
-  [ '/api/articles', 'get', mw.getAll ],
-  [ '/api/articles', 'post', mw.create ],
-  [ '/api/articles/:id', 'get', mw.findOne ],
-  [ '/api/articles/:id', 'put', mw.replace ],
-  [ '/api/articles/:id', 'patch', mw.update ],
-  [ '/api/articles/:id', 'delete', mw.remove ]
-]
-```
-
-A simple example `server/server.js`:
+The default and recommended way of doing this is:
 
 ```js
-'use strict'
+server.response.render = function (template) {
+  const locals = Object.assign({}, server.locals, this.locals)
 
-const bodyParser = require('body-parser')
-const express = require('express')
-const initRoutes = require('midwest/util/init-routes')
-
-const server = express()
-
-server.set('port', 1337)
-
-const prewares = [
-  bodyParser.json(),
-]
-
-const postwares = [
-  require('midwest/middleware/ensure-found'),
-  // transform and log error
-  require('midwest/middleware/error-handler'),
-  // respond
-  require('midwest/middleware/responder'),
-  // handle error in responder
-  require('midwest/middleware/responder-error'),
-]
-
-const routes = [
-  ...prewares,
-  ...require('./routes/index')
-  ...postwares
-]
-
-initRoutes(server, routes)
-
-// Start Express server.
-server.listen(server.get('port'), () => {
-  console.info('[' + chalk.cyan('INIT') + '] HTTP server listening on port %d in %s mode', server.get('port'), server.get('env'))
-})
-
-module.exports = server
+  template.render(locals, this)
+}
 ```
 
 ## Configuration
@@ -113,24 +58,3 @@ parts are currently:
 
 - midwest:errorhandler
 - midwest:responder
-
-## Caveats
-
-### Static routes also matching dynamic routes
-
-Since no middleware except the responder should be sending the response,
-dynamic routes that match static routes will clash.
-
-Ie. if you have 
-
-```js
-module.exports = [
-  [ '/api/users/me', mw.getCurrent ],
-  [ '/api/users/:id', isAdmin, mw.findById ]
-]
-```
-
-and make a request to `/api/users/me`, the isAdmin
-and `mw.findById` middleware will always be called after `mw.getCurrent`.
-If the user is not an admin, all requests to `/api/users/me` will return
-the `401` response from `isAdmin` middleware.
