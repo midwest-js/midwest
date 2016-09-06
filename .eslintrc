@@ -6,7 +6,7 @@
   },
 
   "env": {
-    "mocha": true
+    "node": true
   },
 
   "rules": {
@@ -43,11 +43,5 @@
     "no-shadow": 0,
     "spaced-comment": 0,
     "strict": [ 2, "global" ]
-  },
-
-  "globals": {
-    "PWD": true,
-    "ENV": true,
-    "LOGIN_USER": true
   }
 }
