@@ -12,7 +12,7 @@ It is highly recommended to override the default `uncaughtException`
 to utilize this.
 
 ```js
-const colorizeStack = require('warepot/util/colorize-stack')
+const colorizeStack = require('midwest/util/colorize-stack')
 
 // make error output stack pretty
 process.on('uncaughtException', (err) => {

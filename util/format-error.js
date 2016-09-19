@@ -1,7 +1,7 @@
 /*
  * Formats errors
  *
- * @module warepot/util/format-error
+ * @module midwest/util/format-error
  */
 'use strict'
 
@@ -11,7 +11,7 @@ const p = require('path')
 
 // modules > 3rd party
 const _ = require('lodash')
-const debug = require('debug')('warepot:errorHandler')
+const debug = require('debug')('midwest:errorHandler')
 
 const fileLocationPattern = new RegExp(process.cwd() + '\\/([\\/\\w-_\\.]+\\.js):(\\d*):(\\d*)')
 

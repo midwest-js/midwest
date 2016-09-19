@@ -1,7 +1,7 @@
 /*
  * Assists in formatting queries.
  *
- * @module warepot/format-query
+ * @module midwest/middleware/format-query
  */
 'use strict'
 

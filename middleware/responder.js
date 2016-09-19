@@ -5,13 +5,13 @@
  * Will send `res.locals` as JSON if JSON is requested, otherwise
  * it will render res.template (with res.locals, obviously).
  *
- * @module warepot/responder
+ * @module midwest/middleware/responder
  */
 'use strict'
 
 // modules > 3rd party
 const _ = require('lodash')
-const debug = require('debug')('warepot:responder')
+const debug = require('debug')('midwest:responder')
 
 module.exports = function responder(req, res) {
   function sendJSON() {

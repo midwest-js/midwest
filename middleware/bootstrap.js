@@ -2,7 +2,7 @@
  * Simple middleware that saves res.locals as stringified JSON to
  * `res.locals.INITIAL_STATE` and app.locals to `res.locals.INITIAL_CONTEXT`.
  *
- * @module warepot/bootstrap
+ * @module midwest/middleware/bootstrap
  */
 
 'use strict'

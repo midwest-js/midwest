@@ -2,7 +2,7 @@
  * Very simple middleware that returns languages defined
  * in `$PWD/server/config/languages` (if it exists).
  *
- * @module warepot/get-languages
+ * @module midwest/middleware/get-languages
  */
 
 'use strict'

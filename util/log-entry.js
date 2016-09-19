@@ -5,7 +5,7 @@
  * This module expects a config file located
  * at `server/config/logger`.
  *
- * @module warepot/util/log-entry
+ * @module midwest/util/log-entry
  */
 
 'use strict'

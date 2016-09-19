@@ -1,6 +1,6 @@
 /* Middleware that helps pagination
  *
- * @module warepot/paginate
+ * @module midwest/middleware/paginate
  */
 'use strict'
 

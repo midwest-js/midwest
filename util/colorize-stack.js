@@ -2,9 +2,7 @@
  * Handy little util function that highlights all files in the stack trace not
  * in the node_modules/ folder.
  *
- * Copied from warepot/util/colorize-stack (commit 86b66ea37abc0ecba43c39381ada76b2a0bffe67)
- *
- * @module warepot/util/colorize-stack
+ * @module midwest/util/colorize-stack
  */
 'use strict'
 

@@ -1,6 +1,6 @@
 /* Simple redirect middleware
  *
- * @module warepot/redirect
+ * @module midwest/middleware/redirect
  */
 'use strict'
 

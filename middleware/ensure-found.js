@@ -6,7 +6,7 @@
  * Should be placed at the very end of the middleware pipeline,
  * after all project specific routes but before the error handler & responder.
  *
- * @module warepot/ensure-found
+ * @module midwest/middleware/ensure-found
  */
 
 'use strict'

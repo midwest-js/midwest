@@ -1,5 +1,5 @@
 /*
- * @module warepot/page
+ * @module midwest/middleware/page
  */
 'use strict'
 

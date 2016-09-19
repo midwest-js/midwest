@@ -1,8 +1,8 @@
 /*
  * Error handling middleware
  *
- * @see module:warepot/util/format-error
- * @see module:warepot/util/log-error
+ * @see module:midwest/util/format-error
+ * @see module:midwest/util/log-error
  */
 'use strict'
 

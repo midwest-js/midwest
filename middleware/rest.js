@@ -43,7 +43,8 @@ module.exports = (Model) => {
   }
 
   // use req.query to query database.
-  // should probably be used with warepot/format-query and/or warepot/paginate
+  // should probably be used with `midwest/middleware/format-query` and/or
+  // `midwest/middleware/paginate`
   function query(req, res, next) {
     const page = Math.max(0, req.query.page) || 0
     const perPage = Math.max(0, req.query.limit) || res.locals.perPage

@@ -1,7 +1,7 @@
 /*
  * Simply sets res.template.
  *
- * @module midwest/set-template
+ * @module midwest/middleware/set-template
  */
 'use strict'
 

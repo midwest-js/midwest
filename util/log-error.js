@@ -5,7 +5,7 @@
  * This module expects a config file located
  * at `server/config/error-handler`.
  *
- * @module warepot/util/log-error
+ * @module midwest/util/log-error
  */
 
 'use strict'

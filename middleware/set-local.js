@@ -1,7 +1,7 @@
 /*
  * Sets `key` property on `res.locals` to `value`
  *
- * @module midwest/set-local
+ * @module midwest/middleware/set-local
  */
 'use strict'
 

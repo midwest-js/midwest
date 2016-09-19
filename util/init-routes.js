@@ -1,7 +1,7 @@
 /*
  * Routes initializer
  *
- * @module warepot/util/initRoutes
+ * @module midwest/util/initRoutes
  */
 
 'use strict'
