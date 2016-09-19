@@ -13,9 +13,9 @@ function extractLocation() {
   const cwd = process.cwd()
 
   if (str.includes(cwd))
-    return str.slice(str.indexOf(cwd) + cwd.length, -1)
+    return str.slice(str.indexOf(cwd) + cwd.length + 1, -1)
 
-  return str.slice(str.indexOf('/'), -1)
+  return str.slice(str.indexOf('(') + 1, -1)
 }
 
 console.log = function (...args) {
