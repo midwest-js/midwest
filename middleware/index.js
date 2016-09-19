@@ -8,9 +8,10 @@ module.exports = {
   getLanguages: require('./get-languages.js'),
   page: require('./page.js'),
   paginate: require('./paginate.js'),
+  parallel: require('./parallel.js'),
   redirect: require('./redirect.js'),
-  responderError: require('./responder-error.js'),
   responder: require('./responder.js'),
   rest: require('./rest.js'),
-  setMaster: require('./set-master.js')
+  setLocal: require('./set-local.js'),
+  setTemplate: require('./set-template.js')
 }
