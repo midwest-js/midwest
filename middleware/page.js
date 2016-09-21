@@ -22,7 +22,7 @@ module.exports = function (page, navigation) {
     res.locals.page = _.defaults({
       routePath: page.path,
       path: req.path
-    }, page, 'template')
+    }, page)
 
     if (!req.xhr) {
       res.locals.user = req.user
