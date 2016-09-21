@@ -15,14 +15,17 @@ const debug = require('debug')('midwest:responder')
 
 module.exports = function responder(req, res) {
   function sendJSON() {
-    const keys = Object.keys(res.locals)
-
-    /* if there is only a single property on `res.locals` and it is not a page
-     * object (this can be a model/object or collection/array) then only
-     * return that property.
+    /* if preventFlatten or locals.page is not truthy and there is only a
+     * single property on `res.locals` then we should only return that
+     * property.
+     *
+     * this is to enable api routes not sending nested json object. (such as
+     * `/api/employees` returning an array of employees instead of 
+     * { employees: [] }
      */
+    const flatten = !(res.preventFlatten || res.locals.page) && Object.keys(res.locals).length === 1
 
-    res.json(keys.length === 1 && keys[0] !== 'page' ? res.locals[keys[0]] : _.omit(res.locals, 'query'))
+    res.json(flatten ? _.values(res.locals)[0] : res.locals)
   }
 
   try {
