@@ -3,9 +3,9 @@
  *
  * @module midwest/middleware/set-local
  */
-'use strict'
+'use strict';
 
-const _ = require('lodash')
+const _ = require('lodash');
 
 /* Middleware factory
  *
@@ -16,13 +16,13 @@ const _ = require('lodash')
  */
 module.exports = (key, value) => {
   const fnc = function (req, res, next) {
-    res.locals[key] = value
+    res.locals[key] = value;
 
-    next()
-  }
+    next();
+  };
 
   // set more descriptive name
-  fnc.name = 'setLocal' + _.upperFirst(_.camelCase(key))
+  fnc.name = `setLocal${_.upperFirst(_.camelCase(key))}`;
 
-  return fnc
-}
+  return fnc;
+};

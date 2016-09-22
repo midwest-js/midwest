@@ -1,10 +1,10 @@
-'use strict'
+'use strict';
 
-const _ = require('lodash')
+const _ = require('lodash');
 
 module.exports = (mw) => function parallel(req, res, next) {
   // TODO handle errors
-  next = _.after(mw.length, next)
+  next = _.after(mw.length, next);
 
-  mw.forEach(mw => mw(req, res, next))
-}
+  mw.forEach((mw) => mw(req, res, next));
+};

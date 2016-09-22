@@ -4,44 +4,29 @@
   "parserOptions": {
     "sourceType": "strict"
   },
-
+  
   "env": {
     "node": true
   },
 
   "rules": {
-    "prefer-const": [ 2, { "destructuring": "all" } ],
-    "semi": [ 2, "never" ],
-    "import/no-extraneous-dependencies": ["error", {"devDependencies": true, "optionalDependencies": false, "peerDependencies": false}],
-    "new-cap": 0,
-    "no-mixed-operators": 0,
-    "no-cond-assign": 0,
-    "guard-for-in": 0,
-    "global-require": 0,
-    "no-underscore-dangle": 0,
-    "object-shorthand": 0,
-    "default-case": 0,
-    "one-var": 0,
-    "prefer-rest-params": 0,
-    "no-unused-vars": [ 2, { "args": "none" } ],
-    "no-alert": 0,
-    "quote-props": 0,
-    "no-nested-ternary": 0,
-    "no-use-before-define": [2, { "functions": false, "classes": true }],
-    "consistent-return": 0,
-    "no-eval": 0,
-    "prefer-arrow-callback": 0,
-    "array-bracket-spacing": 0,
-    "no-console": 0,
-    "indent": [ 2, 2, { "SwitchCase": 1 }],
-    "max-len": 0,
-    "comma-dangle": 0,
-    "no-param-reassign": 0,
-    "prefer-template": 0,
-    "curly": 0,
+    "arrow-parens": [2, "always"],
     "func-names": 0,
+    "global-require": 0,
+    "import/no-unresolved": 0,
+    "no-console": [1, { "allow": ["warn", "error", "info"] }],
+    "no-empty": [2, { "allowEmptyCatch": true }],
+    "no-param-reassign": 0,
     "no-shadow": 0,
-    "spaced-comment": 0,
-    "strict": [ 2, "global" ]
+    "consistent-return": [2, { "treatUndefinedAsUnspecified": true }],
+    "no-void": 0,
+    "prefer-const": [2,{"destructuring": "all"}],
+    "import/no-extraneous-dependencies": 0
+  },
+
+  "globals": {
+    "ENV": true,
+    "LOGIN_USER": true,
+    "PWD": true
   }
 }

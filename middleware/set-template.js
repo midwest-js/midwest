@@ -3,7 +3,7 @@
  *
  * @module midwest/middleware/set-template
  */
-'use strict'
+'use strict';
 
 /* Middleware factory
  *
@@ -12,6 +12,6 @@
  * @returns A middleware function
  */
 module.exports = (template) => function setTemplate(req, res, next) {
-  res.template = template
-  next()
-}
+  res.template = template;
+  next();
+};

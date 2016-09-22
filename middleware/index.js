@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 module.exports = {
   boostrap: require('./bootstrap.js'),
@@ -13,5 +13,5 @@ module.exports = {
   responder: require('./responder.js'),
   rest: require('./rest.js'),
   setLocal: require('./set-local.js'),
-  setTemplate: require('./set-template.js')
-}
+  setTemplate: require('./set-template.js'),
+};

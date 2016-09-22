@@ -7,11 +7,11 @@
  *
  * @module midwest/middleware/responder
  */
-'use strict'
+'use strict';
 
 // modules > 3rd party
-const _ = require('lodash')
-const debug = require('debug')('midwest:responder')
+const _ = require('lodash');
+const debug = require('debug')('midwest:responder');
 
 module.exports = function responder(req, res) {
   function sendJSON() {
@@ -20,62 +20,64 @@ module.exports = function responder(req, res) {
      * property.
      *
      * this is to enable api routes not sending nested json object. (such as
-     * `/api/employees` returning an array of employees instead of 
+     * `/api/employees` returning an array of employees instead of
      * { employees: [] }
      */
-    const flatten = !(res.preventFlatten || res.locals.page) && Object.keys(res.locals).length === 1
+    const flatten = !(res.preventFlatten || res.locals.page)
+      && Object.keys(res.locals).length === 1;
 
-    res.json(flatten ? _.values(res.locals)[0] : res.locals)
+    res.json(flatten ? _.values(res.locals)[0] : res.locals);
   }
 
   try {
     res.format({
       json() {
-        debug('ACCEPTS json, returning json')
+        debug('ACCEPTS json, returning json');
 
-        sendJSON()
+        sendJSON();
       },
 
       html() {
-        debug('ACCEPTS html, returning html')
-
-        if (res.template)
-          return res.render(res.template)
-
-        res.send('<pre>' + JSON.stringify(res.locals, null, '  ') + '</pre>')
-      },
-
-      '*/*'() {
-        debug('ACCEPTS */*...')
+        debug('ACCEPTS html, returning html');
 
         if (res.template) {
-          debug('res.template set, sending HTML.')
-
-          res.set('Content-Type', 'text/html')
-
-          return res.render(res.template)
+          return void res.render(res.template);
         }
 
-        debug('res.template not set, sending JSON.')
+        res.send(`<pre>${JSON.stringify(res.locals, null, '  ')}</pre>`);
+      },
 
-        sendJSON()
-      }
-    })
+      '*/*': function () {
+        debug('ACCEPTS */*...');
+
+        if (res.template) {
+          debug('res.template set, sending HTML.');
+
+          res.set('Content-Type', 'text/html');
+
+          return void res.render(res.template);
+        }
+
+        debug('res.template not set, sending JSON.');
+
+        sendJSON();
+      },
+    });
   } catch (e) {
-    const logError = require('../util/log-error')
+    const logError = require('../util/log-error');
 
     // TODO maybe tag or name this error so it is easy to find responder errors.
     // these should almost never occur. it is usually due to a render error
-    console.error('[!!!] ERROR IN RESPONDER, RESPONDER ERROR')
+    console.error('[!!!] ERROR IN RESPONDER, RESPONDER ERROR');
 
-    logError(e)
+    logError(e);
 
     if (res.locals.error) {
-      console.error('[!!!] ERROR IN RESPONDER, ORIGINAL ERROR')
+      console.error('[!!!] ERROR IN RESPONDER, ORIGINAL ERROR');
 
-      logError(res.locals.error, req, { format: false, store: false })
+      logError(res.locals.error, req, { format: false, store: false });
     }
 
-    res.send((res.locals.error || e) + '')
+    res.send((res.locals.error || e).toString());
   }
-}
+};

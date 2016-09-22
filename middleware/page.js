@@ -1,9 +1,9 @@
 /*
  * @module midwest/middleware/page
  */
-'use strict'
+'use strict';
 
-const _ = require('lodash')
+const _ = require('lodash');
 
 /*
  * Middleware factory
@@ -18,17 +18,17 @@ module.exports = function (page, navigation) {
    * page middleware function We work this hard to maintain names for
    * middlewares so it is easier debugging the routes.
    */
-  return Object.defineProperty(function (req, res, next) {
+  return Object.defineProperty((req, res, next) => {
     res.locals.page = _.defaults({
       routePath: page.path,
-      path: req.path
-    }, page)
+      path: req.path,
+    }, page);
 
     if (!req.xhr) {
-      res.locals.user = req.user
-      res.locals.navigation = navigation
+      res.locals.user = req.user;
+      res.locals.navigation = navigation;
     }
 
-    next()
-  }, 'name', { value: 'page' })
-}
+    next();
+  }, 'name', { value: 'page' });
+};

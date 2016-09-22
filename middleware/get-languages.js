@@ -5,21 +5,25 @@
  * @module midwest/middleware/get-languages
  */
 
-'use strict'
+'use strict';
 
-const p = require('path')
-const fs = require('fs')
+// modules > native
+const p = require('path');
+const fs = require('fs');
 
-const fileName = p.join(process.cwd(), 'server/config/languages.js')
+// modules > 3rd party
+const _ = require('lodash');
 
-let languages
+const fileName = p.join(process.cwd(), 'server/config/languages.js');
+
+let languages;
 
 if (fs.existsSync(fileName)) {
-  languages = _.map(require(fileName), (val) => val)
+  languages = _.map(require(fileName), (val) => val);
 }
 
 module.exports = function (req, res, next) {
-  res.locals.languages = languages
+  res.locals.languages = languages;
 
-  next()
-}
+  next();
+};
