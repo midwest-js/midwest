@@ -40,8 +40,8 @@ module.exports = function responder(req, res) {
       html() {
         debug('ACCEPTS html, returning html');
 
-        if (res.template) {
-          return void res.render(res.template);
+        if (res.template || res.master) {
+          return void res.render(res.template, res.master);
         }
 
         res.send(`<pre>${JSON.stringify(res.locals, null, '  ')}</pre>`);
@@ -50,12 +50,12 @@ module.exports = function responder(req, res) {
       '*/*': function () {
         debug('ACCEPTS */*...');
 
-        if (res.template) {
+        if (res.template || res.master) {
           debug('res.template set, sending HTML.');
 
           res.set('Content-Type', 'text/html');
 
-          return void res.render(res.template);
+          return void res.render(res.template, res.master);
         }
 
         debug('res.template not set, sending JSON.');

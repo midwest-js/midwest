@@ -14,7 +14,7 @@
 const _ = require('lodash');
 
 module.exports = function ensureFound(req, res, next) {
-  if (res.template || _.some(res.locals) || res.statusCode === 204) {
+  if (res.template || res.master || _.some(res.locals) || res.statusCode === 204) {
     next();
   } else {
     // generates Not Found error if there is no page to render and no truthy values in data
