@@ -23,10 +23,10 @@ module.exports = function responder(req, res) {
      * `/api/employees` returning an array of employees instead of
      * { employees: [] }
      */
-    const flatten = !(res.preventFlatten || res.locals.page)
+    const shouldFlatten = !(res.preventFlatten || res.locals.page)
       && Object.keys(res.locals).length === 1;
 
-    res.json(flatten ? _.values(res.locals)[0] : res.locals);
+    res.json((shouldFlatten ? _.values(res.locals)[0] : res.locals) || {});
   }
 
   try {
