@@ -20,9 +20,7 @@ const chalk = require('chalk');
  * @returns A colored string of the stack trace
  */
 module.exports = function (stack, html) {
-  if (!stack) return;
-
-  return stack.replace(/\/[\/\w.-]+/g, (match) => {
+  return stack && stack.replace(/\/[\/\w.-]+/g, (match) => {
     if (match.indexOf('node_modules') > -1) {
       return match;
     }

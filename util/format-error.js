@@ -18,6 +18,7 @@ const fileLocationPattern = new RegExp(`${process.cwd()}\\/([\\/\\w-_\\.]+\\.js)
 /*
  * @private
  */
+// eslint-disable-next-line consistent-return
 function parseFileLocation(stack) {
   if (_.isString(stack)) {
     return _.zipObject(['fileName', 'lineNumber', 'columnNumber'],

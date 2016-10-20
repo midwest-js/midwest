@@ -4,7 +4,7 @@
   "description": "Midwest Express is a collection of middleware and utils for Express. Kind of a modular CMS built on top of Express",
   "main": "midwest.js",
   "scripts": {
-    "lint": "eslint midwest.js",
+    "lint": "eslint middleware test util",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
