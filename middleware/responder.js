@@ -15,18 +15,17 @@ const debug = require('debug')('midwest:responder');
 
 module.exports = function responder(req, res) {
   function sendJSON() {
-    /* if preventFlatten or locals.page is not truthy and there is only a
+    /* if preventFlatten is not truthy and there is only a
      * single property on `res.locals` then we should only return that
      * property.
      *
-     * this is to enable api routes not sending nested json object. (such as
-     * `/api/employees` returning an array of employees instead of
-     * { employees: [] }
+     * this is to prevent api routes from sending nested json object. (eg
+     * `/api/employees` returning { employees: [Employee] } or /api/employees/:id
+     * returning { employee: Employee }
      */
-    const shouldFlatten = !(res.preventFlatten || res.locals.page)
-      && Object.keys(res.locals).length === 1;
-
-    res.json((shouldFlatten ? _.values(res.locals)[0] : res.locals) || {});
+    res.json(!res.preventFlatten
+      && Object.keys(res.locals).length === 1 ? _.values(res.locals)[0] : res.locals
+      || {});
   }
 
   try {
