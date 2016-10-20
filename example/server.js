@@ -16,8 +16,8 @@ if (ENV === 'development') {
   require('midwest/util/console');
 }
 
-// make node understand `*.marko` files
-require('marko/node-require').install();
+// make node understand `*.jsx` files
+require('jsx-node/node-require').install();
 
 // modules > native
 const p = require('path');
@@ -86,11 +86,11 @@ Object.assign(server.locals, {
 });
 
 // override default response render method for
-// more convenient use with marko
+// more convenient use with JSX files (only "dump" components)
 server.response.render = function (template) {
   const locals = Object.assign({}, server.locals, this.locals);
 
-  template.render(locals, this);
+  this.send(template(locals));
 };
 
 try {
