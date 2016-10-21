@@ -17,9 +17,9 @@ module.exports = function (config) {
   config = config || require('./example/config/error-handler');
 
   return function errorHandler(error, req, res, next) {
-    error = format(error, req);
+    error = format(error, req, config);
 
-    log(error, req, { format: false });
+    log(error, req, config.log);
 
     // limit what properties are sent to the client by overriding toJSON().
     if (req.isAdmin && !req.isAdmin()) {
