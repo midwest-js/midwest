@@ -1,16 +1,19 @@
 # Midwest Express
 
-Midwest Express is a collection of middleware & utilities for Express.  Midwest
-could be seen as a moduler, opt-in CMS using Express and a KISS (Keep It Simple
-Stupid) philosophy.
+Midwest Express is a collection of middleware & utilities for creating webapps
+using Express. Midwest could be seen as a modular, opt-in CMS using a KISS
+(Keep It Simple Stupid) philosophy.
 
 1. Global responder middleware
-2. No views, use renderable objects instead
-3. All data to be sent should be set on `res.locals`
+2. No views, use functions that return HTML string instead
+3. All data sent to client or used in rendering contexts should be set on
+   `res.locals`
 
-There is no installer or abstraction layer. Using Midwest Express is simply
-following a recommended way to structure an Express app. The app is built manually
-and you use the tools and middleware you find suitable for your project.
+There is no installer or similar abstraction layer. Using Midwest Express is
+currently simply following a recommended way to structure an Express app
+bundled with some useful middleware and middleware factories. The app is built
+manually and you use the tools and middleware you find suitable for your
+project.
 
 ## Global Responder Middleware
 
@@ -19,29 +22,19 @@ Basically no other middleware should be sending the response, they should simply
 call `next()` until the responder is reached. The responder then either
 send the contents of `res.locals` as JSON, or renders a template.
 
-[./doc/responder.md](Read more)
+[./doc/responder.md](Read the documenation about GRM)
 
-## Rendering
+## Rendering HTML
 
-One of the most important parts of using a Midwest Express workflow is to
-override the default Express response rendering functionality. Instead of
-passing a view/template name as a string to `res.render()` or `app.render()`,
-one must pass an object with a render method. The second arguement of this
-shall be the response (or any other writeable stream).
++ [./doc/rendering.md](Read the documenation about Rendering HTML)
 
-The default and recommended way of doing this is:
+## Middleware & Middlware Factories
 
-```js
-server.response.render = function (template) {
-  const locals = Object.assign({}, server.locals, this.locals)
-
-  template.render(locals, this)
-}
-```
++ [./doc/middleware.md](Read the documenation about Middleware & Middleware Factories)
 
 ## Configuration
 
-The error handler needs some configuration.
+Some middleware factories require configuration.
 
 There is a `/sample-config` directory that contains example configuration
 files.  These should be copied into your project's `/server/config` directory

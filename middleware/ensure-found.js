@@ -14,12 +14,16 @@
 const _ = require('lodash');
 
 module.exports = function ensureFound(req, res, next) {
-  if (res.template || res.master || _.some(res.locals) || res.statusCode === 204) {
+  // it seems most reasonable to check if res.locals is empty before res.statusCode
+  // because the former is much more common
+  if (res.template || res.master || !_.isEmpty(res.locals) || res.statusCode === 204) {
     next();
   } else {
-    // generates Not Found error if there is no page to render and no truthy values in data
-    next(Object.assign(new Error(`Not found: ${req.path}`), {
-      status: 404,
-    }));
+    // generates Not Found error if there is no page to render and no truthy
+    // values in data
+    const err = new Error(`Not found: ${req.path}`);
+    err.status = 404;
+
+    next(err);
   }
 };
