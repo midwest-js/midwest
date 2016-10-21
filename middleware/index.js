@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  boostrap: require('./bootstrap.js'),
+  bootstrap: require('./bootstrap.js'),
   ensureFound: require('./ensure-found.js'),
   errorHandler: require('./error-handler.js'),
   formatQuery: require('./format-query.js'),
