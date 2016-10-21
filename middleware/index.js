@@ -14,4 +14,5 @@ module.exports = {
   rest: require('./rest.js'),
   setLocal: require('./set-local.js'),
   setTemplate: require('./set-template.js'),
+  shim: require('./shim.js'),
 };
