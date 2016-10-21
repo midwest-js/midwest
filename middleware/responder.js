@@ -13,8 +13,11 @@
 const _ = require('lodash');
 const debug = require('debug')('midwest:responder');
 
-module.exports = function responder(req, res) {
-  function sendJSON() {
+const responses = {
+  json(res) {
+    // TODO now this function is also called by '*/*'
+    debug('ACCEPTS json, returning json');
+
     /* if preventFlatten is not truthy and there is only a
      * single property on `res.locals` then we should only return that
      * property.
@@ -26,42 +29,40 @@ module.exports = function responder(req, res) {
     res.json(!res.preventFlatten
       && Object.keys(res.locals).length === 1 ? _.values(res.locals)[0] : res.locals
       || {});
-  }
+  },
 
+  html(res) {
+    debug('ACCEPTS html, returning html');
+
+    if (res.template || res.master) {
+      debug('res.template or res.master set, rendering.');
+
+      return void res.render(res.template, res.master);
+    }
+
+    debug('res.template or res.master not set, sending <pre>.');
+
+    res.send(`<pre>${JSON.stringify(res.locals, null, '  ')}</pre>`);
+  },
+
+  '*/*': function (res) {
+    debug('ACCEPTS */*...');
+
+    if (res.template || res.master) {
+      debug('res.template or res.master set, rendering.');
+
+      return void res.render(res.template, res.master);
+    }
+
+    debug('res.template or res.master not set, sending JSON.');
+
+    responses.json(res);
+  },
+};
+
+module.exports = function responder(req, res) {
   try {
-    res.format({
-      json() {
-        debug('ACCEPTS json, returning json');
-
-        sendJSON();
-      },
-
-      html() {
-        debug('ACCEPTS html, returning html');
-
-        if (res.template || res.master) {
-          return void res.render(res.template, res.master);
-        }
-
-        res.send(`<pre>${JSON.stringify(res.locals, null, '  ')}</pre>`);
-      },
-
-      '*/*': function () {
-        debug('ACCEPTS */*...');
-
-        if (res.template || res.master) {
-          debug('res.template set, sending HTML.');
-
-          res.set('Content-Type', 'text/html');
-
-          return void res.render(res.template, res.master);
-        }
-
-        debug('res.template not set, sending JSON.');
-
-        sendJSON();
-      },
-    });
+    responses[req.accepts('html', 'json', '*/*')](res);
   } catch (e) {
     const logError = require('../util/log-error');
 
