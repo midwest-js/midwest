@@ -12,6 +12,7 @@ module.exports = {
   responder: require('./responder.js'),
   rest: require('./rest.js'),
   setLocal: require('./set-local.js'),
+  setMaster: require('./set-master.js'),
   setTemplate: require('./set-template.js'),
   shim: require('./shim.js'),
 };
