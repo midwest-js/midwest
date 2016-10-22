@@ -9,7 +9,7 @@ const _ = require('lodash');
 
 const evals = ['undefined', 'null', 'false', 'true'];
 
-const _filters = {
+const commonFilters = {
   regex(value) {
     return new RegExp(value, 'i');
   },
@@ -35,20 +35,23 @@ const _filters = {
  * @return A middleware function
  */
 module.exports = function (properties, filters, transform) {
+  // allow properties to be filtered
   properties = _.union(properties, _.keys(filters));
 
-  filters = _.mapValues(filters, (value) => (_.isString(value) ? _filters[value] : value));
+  filters = _.mapValues(filters, (value) => (_.isString(value) ? commonFilters[value] : value));
+
+  function mapQuery(value, key) {
+    value = decodeURIComponent(value);
+
+    // eslint-disable-next-line no-eval
+    if (evals.indexOf(value) > -1) value = eval(value);
+
+    return filters[key] ? filters[key](value) : value;
+  }
 
   // return the actual middleware function
-  return function (req, res, next) {
-    req.query = _.mapValues(_.pick(req.query, properties), (value, key) => {
-      value = decodeURIComponent(value);
-
-      // eslint-disable-next-line no-eval
-      if (evals.indexOf(value) > -1) value = eval(value);
-
-      return filters[key] ? filters[key](value) : value;
-    });
+  return function formatQuery(req, res, next) {
+    req.query = _.mapValues(_.pick(req.query, properties), mapQuery);
 
     if (transform instanceof Function) req.query = transform(req.query);
 
