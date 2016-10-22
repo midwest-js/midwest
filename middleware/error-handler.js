@@ -14,7 +14,9 @@ const format = require('../util/format-error');
 const log = require('../util/log-error');
 
 module.exports = function (config) {
-  config = config || require('./example/config/error-handler');
+  if (!config) {
+    throw new Error('`config` required for errorHandler middleware factory');
+  }
 
   return function errorHandler(error, req, res, next) {
     error = format(error, req, config);
