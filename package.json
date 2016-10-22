@@ -5,6 +5,8 @@
   "main": "midwest.js",
   "scripts": {
     "lint": "eslint middleware test util",
+    "prepublish": "npm run lint",
+    "preversion": "npm run lint",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -27,5 +29,9 @@
     "debug": "^2.2.0",
     "express": "^4.14.0",
     "lodash": "^4.14.2"
+  },
+  "devDependencies": {
+    "eslint": "^3.8.1",
+    "eslint-config-airbnb-base": "^9.0.0"
   }
 }
