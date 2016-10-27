@@ -70,7 +70,7 @@ module.exports = function responder(req, res) {
     // these should almost never occur. it is usually due to a render error
     console.error('[!!!] ERROR IN RESPONDER, RESPONDER ERROR');
 
-    logError(e);
+    logError(e, null, { console: true }, true);
 
     if (res.locals.error) {
       console.error('[!!!] ERROR IN RESPONDER, ORIGINAL ERROR');

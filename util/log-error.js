@@ -79,7 +79,7 @@ module.exports = function logError(error, req, config, format = false) {
     logStore = config.store;
   }
 
-  if (config.ignore.indexOf(error.status) < 0) {
+  if (!config.ignore || config.ignore.indexOf(error.status) < 0) {
     if (logConsole) {
       logConsole(error, config);
     }
