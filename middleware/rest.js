@@ -4,11 +4,22 @@ const _ = require('lodash');
 const mongoose = require('mongoose');
 
 module.exports = (Model) => {
+  // will be exactly what the user set, should be in Pascal Case.
   const singular = _.camelCase(Model.modelName);
-  // TODO
-  // this will probably give all lowercase for multiple word collections
-  // eg newsArticles will probably be newsarticles
-  const plural = Model.collection.name;
+
+  // will be an all lowercase, (sometimes poorly) pluralized version of
+  // `singular`, such as Goose > gooses, Gallery > Galleries,
+  // NewsArticle > newsarticles
+  const collectionName = Model.collection.name;
+
+  // since we want the plural name to be in camelCase as well,
+  // we superimpose those characters that are the same from singular
+  // on to plural (NewsArticle > newsArticles)
+  const plural = _.reduce(collectionName, (str, char, i) => {
+    const otherChar = singular.charAt(i);
+
+    return str + (otherChar && otherChar.toLowerCase() === char ? otherChar : char);
+  }, '');
 
   function create(req, res, next) {
     Model.create(req.body, (err, doc) => {
