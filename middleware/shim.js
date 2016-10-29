@@ -7,14 +7,21 @@ const ua = require('useragent');
 module.exports = function (config) {
   config = config || require('./example/config/shim');
 
+  const allShims = [];
   // returns { family: [[ url, operator, majorVersion ]] }
   const allTests = _.reduce(config, (result, value, key) => {
     value.forEach((str) => {
-      const [family, operator, major] = str.split(' ');
+      const arr = str.split(' ');
+
+      const family = arr.slice(0, -2).join(' ');
+
+      const [operator, major] = arr.slice(-2);
 
       if (!result[family]) {
         result[family] = [];
       }
+
+      allShims.push(key);
 
       result[family].push([key, operator, parseInt(major, 10)]);
     });
@@ -29,41 +36,45 @@ module.exports = function (config) {
 
     const tests = allTests[family.toLowerCase()];
 
-    const scripts = [];
+    if (tests) {
+      const scripts = [];
 
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < tests.length; i++) {
-      const test = tests[i];
+      for (let i = 0; i < tests.length; i += 1) {
+        const test = tests[i];
 
-      switch (test[1]) {
-        case '<':
-          if (major < test[2]) scripts.push(test[0]);
-          break;
-        case '<=':
-          if (major <= test[2]) scripts.push(test[0]);
-          break;
-        case '>':
-          if (major > test[2]) scripts.push(test[0]);
-          break;
-        case '>=':
-          if (major >= test[2]) scripts.push(test[0]);
-          break;
-        case '==':
-        case '===':
-          if (major === test[2]) scripts.push(test[0]);
-          break;
-        case '!=':
-        case '!==':
-          if (major !== test[2]) scripts.push(test[0]);
-          break;
-        default:
-          throw new Error('Invalid operator');
+        switch (test[1]) {
+          case '<':
+            if (major < test[2]) scripts.push(test[0]);
+            break;
+          case '<=':
+            if (major <= test[2]) scripts.push(test[0]);
+            break;
+          case '>':
+            if (major > test[2]) scripts.push(test[0]);
+            break;
+          case '>=':
+            if (major >= test[2]) scripts.push(test[0]);
+            break;
+          case '==':
+          case '===':
+            if (major === test[2]) scripts.push(test[0]);
+            break;
+          case '!=':
+          case '!==':
+            if (major !== test[2]) scripts.push(test[0]);
+            break;
+          default:
+            throw new Error('Invalid operator');
+        }
       }
+
+      if (scripts.length) {
+        res.locals.scripts = scripts;
+      }
+    } else {
+      res.locals.scripts = allShims;
     }
 
-    if (scripts.length) {
-      res.locals.scripts = scripts;
-    }
 
     next();
   };
