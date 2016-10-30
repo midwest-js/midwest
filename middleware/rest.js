@@ -28,7 +28,7 @@ module.exports = (Model) => {
       /* eslint-disable-next-line */
       res.set('Location', `${req.url}/${doc._id}`)
         .status(201)
-        .locals[singular] = doc;
+        .locals[singular] = doc.toJSON();
 
       return next();
     });
@@ -47,7 +47,7 @@ module.exports = (Model) => {
   }
 
   function getAll(req, res, next) {
-    Model.find({}).sort('name').exec((err, docs) => {
+    Model.find({}).sort('name').lean().exec((err, docs) => {
       res.locals[plural] = docs;
 
       next(err);
@@ -101,7 +101,7 @@ module.exports = (Model) => {
     Model.findByIdAndUpdate(query, _.omit(req.body, '_id', '__v'), { new: true, overwrite: true }, (err, doc) => {
       if (err) return void next(err);
 
-      res.locals[singular] = doc;
+      res.locals[singular] = doc.toJSON();
 
       next();
     });
@@ -119,7 +119,7 @@ module.exports = (Model) => {
     Model.findByIdAndUpdate(query, _.omit(req.body, '_id', '__v'), { new: true }, (err, doc) => {
       if (err) return void next(err);
 
-      res.locals[singular] = doc;
+      res.locals[singular] = doc.toJSON();
 
       next();
     });
