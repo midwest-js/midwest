@@ -21,7 +21,7 @@ module.exports = function ensureFound(req, res, next) {
   } else {
     // generates Not Found error if there is no page to render and no truthy
     // values in data
-    const err = new Error(`Not found: ${req.path}`);
+    const err = new Error(`Not found: ${req.method.toUpperCase()} ${req.path}`);
     err.status = 404;
 
     next(err);
