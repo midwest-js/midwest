@@ -10,7 +10,7 @@
 const _ = require('lodash');
 
 // modules > midwest
-const parallel = require('../middleware/parallel');
+const parallel = require('../factories/parallel');
 
 /*
  * Initializes an array of routes on an express instance
