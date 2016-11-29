@@ -3,17 +3,15 @@
 const p = require('path');
 
 const _ = require('lodash');
-const pg = require('pg');
 
-const { where } = require('../util/sql');
+const db = require(p.join(PWD, 'server/db'));
 
-const config = require(p.join(PWD, 'server/config/postgres'));
-const pool = new pg.Pool(config);
+const { columns: sqlColumns, where } = require('../util/sql');
 
 const factories = {
   count(table) {
     return function count(json, cb) {
-      let query = `SELECT count(*) FROM ${table}`;
+      let query = `SELECT count(id) FROM ${table}`;
 
       let values;
 
@@ -24,10 +22,11 @@ const factories = {
 
       query += ';';
 
-      pool.query(query, values, (err, result) => {
+
+      db.query(query, values, (err, result) => {
         if (err) return cb(err);
 
-        cb(null, result.rows[0].count);
+        cb(null, parseInt(result.rows[0].count, 10));
       });
     };
   },
@@ -36,12 +35,12 @@ const factories = {
     return function create(json, cb) {
       json = _.omitBy(json, _.isUndefined);
 
-      const keys = _.keys(json).map(_.snakeCase);
+      const keys = _.keys(json).map((key) => `"${_.snakeCase(key)}"`);
       const values = _.values(json);
 
       const query = `INSERT INTO ${table} (${keys.join(', ')}) VALUES (${values.map((v, i) => `$${i + 1}`).join(', ')}) RETURNING *;`;
 
-      pool.query(query, values, (err, result) => {
+      db.query(query, values, (err, result) => {
         if (err) return cb(err);
 
         return cb(null, result.rows[0]);
@@ -52,14 +51,16 @@ const factories = {
   // use req.query to query database.
   // should probably be used with `midwest/middleware/format-query` and/or
   // `midwest/middleware/paginate`
-  find(table) {
+  find(table, columns) {
+    columns = sqlColumns(columns);
+
     return function find(json, cb) {
       const page = Math.max(0, json.page);
       const perPage = Math.max(0, json.limit);
 
       json = _.omit(json, 'limit', 'sort', 'page');
 
-      let query = `SELECT * FROM ${table}`;
+      let query = `SELECT ${columns} FROM ${table}`;
 
       if (Object.keys(json).length) {
         query += ` WHERE ${where(json)}`;
@@ -77,7 +78,7 @@ const factories = {
 
       const values = _.values(_.omitBy(json, _.isNil));
 
-      pool.query(query, values, (err, result) => {
+      db.query(query, values, (err, result) => {
         if (err) return cb(err);
 
         cb(null, result.rowCount ? result.rows : undefined);
@@ -86,11 +87,15 @@ const factories = {
   },
 
 
-  findById(table) {
-    return function findById(id, cb) {
-      const query = `SELECT * FROM ${table} WHERE id = $1;`;
+  findById(table, columns) {
+    columns = sqlColumns(columns);
 
-      pool.query(query, [id], (err, result) => {
+    return function findById(id, cb) {
+      if (id === 'new') return cb();
+
+      const query = `SELECT ${columns} FROM ${table} WHERE id = $1;`;
+
+      db.query(query, [id], (err, result) => {
         if (err) return cb(err);
 
         cb(null, result.rows[0]);
@@ -98,13 +103,15 @@ const factories = {
     };
   },
 
-  findOne(table) {
+  findOne(table, columns) {
+    columns = sqlColumns(columns);
+
     return function find(json, cb) {
-      const query = `SELECT * FROM ${table} WHERE ${where(json)} LIMIT 1;`;
+      const query = `SELECT ${columns} FROM ${table} WHERE ${where(json)} LIMIT 1;`;
 
       const values = _.values(_.omitBy(json, _.isNil));
 
-      pool.query(query, values, (err, result) => {
+      db.query(query, values, (err, result) => {
         if (err) return cb(err);
 
         cb(null, result.rows[0]);
@@ -112,11 +119,13 @@ const factories = {
     };
   },
 
-  getAll(table) {
-    return function getAll(cb) {
-      const query = `SELECT * FROM ${table};`;
+  getAll(table, columns) {
+    columns = sqlColumns(columns);
 
-      pool.query(query, (err, result) => {
+    return function getAll(cb) {
+      const query = `SELECT ${columns} FROM ${table};`;
+
+      db.query(query, (err, result) => {
         if (err) return cb(err);
 
         cb(null, result.rowCount ? result.rows : undefined);
@@ -128,13 +137,17 @@ const factories = {
     return function remove(id, cb) {
       const query = `DELETE FROM ${table} WHERE id = ${id};`;
 
-      pool.query(query, cb);
+      db.query(query, (err, result) => {
+        if (err) return cb(err);
+
+        cb(null, result.rowCount);
+      });
     };
   },
 
   // completely replaces the doc
   // SHOULD be used with PUT
-  replace(table) {
+  replace(table, columns) {
     function replace(req, res, next) {
       // enable using using _hid (not that _id MUST be a ObjectId)
       const query = {
@@ -162,19 +175,19 @@ const factories = {
 
       const query = `UPDATE ${table} SET ${keys.map((key, i) => `${key}=($${i + 1})`).join(' ')} WHERE id = ($${keys.length});`;
 
-      pool.query(query, cb);
+      db.query(query, cb);
     };
   },
 };
 
 const all = Object.keys(factories);
 
-module.exports = (table, exclude, include) => {
+module.exports = (table, columns, queries, exclude, include) => {
   include = include || _.difference(all, exclude);
 
   return include.reduce((result, value) => {
     if (factories[value]) {
-      result[value] = factories[value](table);
+      result[value] = factories[value](table, columns);
     }
 
     return result;
