@@ -20,7 +20,7 @@ const fileLocationPattern = new RegExp(`${process.cwd()}\\/([\\/\\w-_\\.]+\\.js)
 // eslint-disable-next-line consistent-return
 function parseFileLocation(stack) {
   if (_.isString(stack)) {
-    return _.zipObject(['fileName', 'lineNumber', 'columnNumber'],
+    return _.zipObject(['filename', 'lineNumber', 'columnNumber'],
       _.tail(stack.match(fileLocationPattern)));
   }
 }
@@ -34,10 +34,21 @@ function parseFileLocation(stack) {
  *
  * @returns The formatted error as a plain object.
  */
+
+const allowedProperties = ['id', 'body', 'columnNumber', 'dateCreated', 'description', 'details', 'filename', 'ip', 'lineNumber', 'method', 'message', 'name', 'path', 'query', 'session', 'stack', 'status', 'statusText', 'user_id', 'userAgent', 'xhr'];
+
 module.exports = function (error, req) {
   // pick all important properties on Error prototype and any
   // own properties
-  let err = _.pick(error, ['stack', 'message', 'name'].concat(_.keys(error)));
+  // let err = _.pick(error, ['stack', 'message', 'name', ...Object.keys(error)];
+
+  let err = _.pick(error, allowedProperties);
+
+  const nonStandardProperties = _.difference(Object.keys(error), allowedProperties);
+
+  if (nonStandardProperties.length) {
+    err.details = Object.assign({}, err.details, _.pick(error, nonStandardProperties));
+  }
 
   debug(`unformatted error: ${JSON.stringify(error, null, '\t')}`);
 
@@ -49,7 +60,7 @@ module.exports = function (error, req) {
       path: req.path,
       method: req.method,
       ip: req.ip,
-      user: req.user && req.user.id,
+      user_id: req.user && req.user.id,
       userAgent: req.headers['user-agent'],
     });
 
