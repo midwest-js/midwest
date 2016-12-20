@@ -3,6 +3,7 @@
  *
  * @module midwest/util/format-error
  */
+
 'use strict';
 
 // modules > native

@@ -7,6 +7,7 @@
  *
  * @module midwest/middleware/responder
  */
+
 'use strict';
 
 // modules > 3rd party

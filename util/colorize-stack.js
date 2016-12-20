@@ -4,6 +4,7 @@
  *
  * @module midwest/util/colorize-stack
  */
+
 'use strict';
 
 // modules > native
@@ -20,6 +21,7 @@ const chalk = require('chalk');
  * @returns A colored string of the stack trace
  */
 module.exports = function (stack, html) {
+  // eslint-disable-next-line no-useless-escape
   return stack && stack.replace(/\/[\/\w.-]+/g, (match) => {
     if (match.indexOf('node_modules') > -1) {
       return match;

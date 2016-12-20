@@ -17,6 +17,7 @@
     "import/no-extraneous-dependencies": 0,
     "import/no-unresolved": [2, { "ignore": ["^[^./]"] }],
     "no-console": [1, { "allow": ["warn", "error", "info"] }],
+    "import/no-dynamic-require": 0,
     "no-empty": [2, { "allowEmptyCatch": true }],
     "no-param-reassign": 0,
     "no-shadow": 0,
