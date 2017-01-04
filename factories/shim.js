@@ -8,22 +8,26 @@ module.exports = function (config) {
   config = config || require('./example/config/shim');
 
   const allShims = [];
+
   // returns { family: [[ url, operator, majorVersion ]] }
-  const allTests = _.reduce(config, (result, value, key) => {
+  const allTests = _.reduce(config, (result, value, script) => {
     value.forEach((str) => {
+      // str will be 'samsung internet <= 1' or similar
       const arr = str.split(' ');
 
+      // chrome or 'samsung internet'
       const family = arr.slice(0, -2).join(' ');
 
+      // operator is <=, >=... and major is major version number
       const [operator, major] = arr.slice(-2);
 
       if (!result[family]) {
         result[family] = [];
       }
 
-      allShims.push(key);
+      allShims.push(script);
 
-      result[family].push([key, operator, parseInt(major, 10)]);
+      result[family].push([script, operator, parseInt(major, 10)]);
     });
 
     return result;
@@ -32,7 +36,7 @@ module.exports = function (config) {
   return function shim(req, res, next) {
     if (req.xhr || req.accepts(['json', '*/*']) === 'json') return next();
 
-    const { family, major } = ua.parse(req.headers['user-agent']);
+    const { family, uaVersion } = ua.parse(req.headers['user-agent']);
 
     const tests = allTests[family.toLowerCase()];
 
@@ -40,28 +44,28 @@ module.exports = function (config) {
       const scripts = [];
 
       for (let i = 0; i < tests.length; i += 1) {
-        const test = tests[i];
+        const [script, operator, version] = tests[i];
 
-        switch (test[1]) {
+        switch (operator) {
           case '<':
-            if (major < test[2]) scripts.push(test[0]);
+            if (uaVersion < version) scripts.push(script);
             break;
           case '<=':
-            if (major <= test[2]) scripts.push(test[0]);
+            if (uaVersion <= version) scripts.push(script);
             break;
           case '>':
-            if (major > test[2]) scripts.push(test[0]);
+            if (uaVersion > version) scripts.push(script);
             break;
           case '>=':
-            if (major >= test[2]) scripts.push(test[0]);
+            if (uaVersion >= version) scripts.push(script);
             break;
           case '==':
           case '===':
-            if (major === test[2]) scripts.push(test[0]);
+            if (uaVersion === version) scripts.push(script);
             break;
           case '!=':
           case '!==':
-            if (major !== test[2]) scripts.push(test[0]);
+            if (uaVersion !== version) scripts.push(script);
             break;
           default:
             throw new Error('Invalid operator');
@@ -72,9 +76,9 @@ module.exports = function (config) {
         res.locals.scripts = scripts;
       }
     } else {
+      // add all shims for unknown browsers
       res.locals.scripts = allShims;
     }
-
 
     next();
   };
