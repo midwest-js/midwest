@@ -165,17 +165,24 @@ const factories = {
     }
   },
 
-  update(table) {
+  update(table, columns) {
+    columns = sqlColumns(columns);
+
     // changes properties passed on req.body
     // SHOULD be used with PATCH
     return function update(id, json, cb) {
       // enable using using _hid (not that _id MUST be a ObjectId)
 
-      const keys = Object.keys(json);
+      const keys = _.keys(json).map((key) => `"${_.snakeCase(key)}"`);
+      const values = _.values(json);
 
-      const query = `UPDATE ${table} SET ${keys.map((key, i) => `${key}=($${i + 1})`).join(' ')} WHERE id = ($${keys.length});`;
+      const query = `UPDATE ${table} SET ${keys.map((key, i) => `${key}=$${i + 1}`).join(', ')} WHERE id = $${keys.length + 1} RETURNING ${columns};`;
 
-      db.query(query, cb);
+      db.query(query, [...values, id], (err, result) => {
+        if (err) return cb(err);
+
+        cb(null, result.rows[0]);
+      });
     };
   },
 };

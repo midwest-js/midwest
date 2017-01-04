@@ -102,9 +102,10 @@ const factories = {
     // SHOULD be used with PATCH
     return function update(req, res, next) {
       // enable using using _hid (not that _id MUST be a ObjectId)
-      handlers.update(req.params.id, req.params.body, (err, row) => {
+      handlers.update(req.params.id, req.body, (err, row) => {
         if (err) return void next(err);
 
+        // TODO return different status if nothing updated
         res.status(201).locals[singular] = row;
 
         next();
