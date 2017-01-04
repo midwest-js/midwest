@@ -86,11 +86,11 @@ const factories = {
     // completely replaces the doc
     // SHOULD be used with PUT
     return function replace(req, res, next) {
-      // Note that if no doc is found, both err & doc are null.
-      handlers.findByIdAndUpdate(query, _.omit(req.body, '_id', '__v'), { new: true, overwrite: true }, (err, row) => {
+      handlers.replace(req.params.id, req.body, (err, row) => {
         if (err) return void next(err);
 
-        res.status(201).locals[single] = row;
+        // TODO return different status if nothing updated
+        res.status(201).locals[singular] = row;
 
         next();
       });

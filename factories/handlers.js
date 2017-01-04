@@ -148,35 +148,27 @@ const factories = {
   // completely replaces the doc
   // SHOULD be used with PUT
   replace(table, columns) {
-    function replace(req, res, next) {
-      // enable using using _hid (not that _id MUST be a ObjectId)
-      const query = {
-        [mongoose.Types.ObjectId.isValid(req.params.id) ? '_id' : '_hid']: req.params.id,
-      };
-
-      // Note that if no doc is found, both err & doc are null.
-      Model.findByIdAndUpdate(query, _.omit(req.body, '_id', '__v'), { new: true, overwrite: true }, (err, doc) => {
-        if (err) return void next(err);
-
-        res.locals[singular] = doc.toJSON();
-
-        next();
-      });
-    }
+    return this.update(table, columns, true);
   },
 
-  update(table, columns) {
-    columns = sqlColumns(columns);
+  update(table, columns, replace) {
+    const columnsString = sqlColumns(columns);
 
     // changes properties passed on req.body
     // SHOULD be used with PATCH
     return function update(id, json, cb) {
       // enable using using _hid (not that _id MUST be a ObjectId)
 
+      if (replace) {
+        _.difference(columns, _.keys(json)).forEach((key) => {
+          json[key] = null;
+        });
+      }
+
       const keys = _.keys(json).map((key) => `"${_.snakeCase(key)}"`);
       const values = _.values(json);
 
-      const query = `UPDATE ${table} SET ${keys.map((key, i) => `${key}=$${i + 1}`).join(', ')} WHERE id = $${keys.length + 1} RETURNING ${columns};`;
+      const query = `UPDATE ${table} SET ${keys.map((key, i) => `${key}=$${i + 1}`).join(', ')} WHERE id = $${keys.length + 1} RETURNING ${columnsString};`;
 
       db.query(query, [...values, id], (err, result) => {
         if (err) return cb(err);
