@@ -181,7 +181,7 @@ const factories = {
 
 const all = Object.keys(factories);
 
-module.exports = (table, columns, queries, exclude, include) => {
+module.exports = ({ table, columns, exclude, include }) => {
   include = include || _.difference(all, exclude);
 
   return include.reduce((result, value) => {

@@ -116,10 +116,14 @@ const factories = {
 
 const all = Object.keys(factories);
 
-module.exports = (plural, singular, handlers) => {
+module.exports = ({ plural, singular, handlers }) => {
   singular = singular || plural.slice(0, -1);
 
-  handlers = Object.assign(handlersFactory(plural, handlers ? Object.keys(handlers) : null), handlers);
+  const missing = _.difference(all, Object.keys(handlers));
+
+  if (missing.length) {
+    throw new Error(`Missing "${plural}" handlers: ${missing.join(', ')}`);
+  }
 
   const include = all;
 
