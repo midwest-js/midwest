@@ -122,8 +122,9 @@ const factories = {
   getAll(table, columns) {
     columns = sqlColumns(columns);
 
+    const query = `SELECT ${columns} FROM ${table};`;
+
     return function getAll(cb) {
-      const query = `SELECT ${columns} FROM ${table};`;
 
       db.query(query, (err, result) => {
         if (err) return cb(err);
@@ -134,10 +135,10 @@ const factories = {
   },
 
   remove(table) {
-    return function remove(id, cb) {
-      const query = `DELETE FROM ${table} WHERE id = ${id};`;
+    const query = `DELETE FROM ${table} WHERE id = $1;`;
 
-      db.query(query, (err, result) => {
+    return function remove(id, cb) {
+      db.query(query, [id], (err, result) => {
         if (err) return cb(err);
 
         cb(null, result.rowCount);
