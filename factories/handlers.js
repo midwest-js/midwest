@@ -51,7 +51,7 @@ const factories = {
   // use req.query to query database.
   // should probably be used with `midwest/middleware/format-query` and/or
   // `midwest/middleware/paginate`
-  find(table, columns) {
+  find(table, columns, query) {
     columns = sqlColumns(columns);
 
     return function find(json, cb) {
@@ -60,28 +60,36 @@ const factories = {
 
       json = _.omit(json, 'limit', 'sort', 'page');
 
-      let query = `SELECT ${columns} FROM ${table}`;
+      let q;
 
-      if (Object.keys(json).length) {
-        query += ` WHERE ${where(json)}`;
+      if (query) {
+        if (_.isFunction(query)) {
+          q = query(json);
+        }
+      } else {
+        q = `SELECT ${columns} FROM ${table}`;
+
+        if (Object.keys(json).length) {
+          q += ` WHERE ${where(json)}`;
+        }
+
+        if (perPage) {
+          q += ` LIMIT ${perPage} OFFSET ${perPage * page}`;
+        }
+
+        if (json.sort) {
+          q += ` ORDER BY ${json.sort}`;
+        }
+
+        q += ';';
       }
-
-      if (perPage) {
-        query += ` LIMIT ${perPage} OFFSET ${perPage * page}`;
-      }
-
-      if (query.sort) {
-        query += ` ORDER BY ${json.sort}`;
-      }
-
-      query += ';';
 
       const values = _.values(_.omitBy(json, _.isNil));
 
-      db.query(query, values, (err, result) => {
+      db.query(q, values, (err, result) => {
         if (err) return cb(err);
 
-        cb(null, result.rowCount ? result.rows : undefined);
+        cb(null, result.rows);
       });
     };
   },
@@ -129,7 +137,7 @@ const factories = {
       db.query(query, (err, result) => {
         if (err) return cb(err);
 
-        cb(null, result.rowCount ? result.rows : undefined);
+        cb(null, result.rows);
       });
     };
   },
