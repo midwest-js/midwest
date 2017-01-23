@@ -31,14 +31,16 @@ const factories = {
     };
   },
 
-  create(table) {
+  create(table, columns) {
+    const columnsString = sqlColumns(columns);
+
     return function create(json, cb) {
       json = _.omitBy(json, _.isUndefined);
 
       const keys = _.keys(json).map((key) => `"${_.snakeCase(key)}"`);
       const values = _.values(json);
 
-      const query = `INSERT INTO ${table} (${keys.join(', ')}) VALUES (${values.map((v, i) => `$${i + 1}`).join(', ')}) RETURNING *;`;
+      const query = `INSERT INTO ${table} (${keys.join(', ')}) VALUES (${values.map((v, i) => `$${i + 1}`).join(', ')}) RETURNING ${columnsString};`;
 
       db.query(query, values, (err, result) => {
         if (err) return cb(err);
