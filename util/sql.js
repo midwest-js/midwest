@@ -5,6 +5,10 @@ const _ = require('lodash');
 module.exports = {
   columns(array, table) {
     return array.map((column) => {
+      if (Array.isArray(column)) {
+        return `${column[0]} as ${[column[1]]}`;
+      }
+
       const snakeCase = _.snakeCase(column);
 
       let str = '';
