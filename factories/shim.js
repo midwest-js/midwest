@@ -36,7 +36,10 @@ module.exports = function (config) {
   return function shim(req, res, next) {
     if (req.xhr || req.accepts(['json', '*/*']) === 'json') return next();
 
-    const { family, uaVersion } = ua.parse(req.headers['user-agent']);
+    const { family, major: uaVersion } = ua.parse(req.headers['user-agent']);
+    console.log(ua.parse(req.headers['user-agent']));
+
+    console.log(family, uaVersion);
 
     const tests = allTests[family.toLowerCase()];
 
