@@ -37,9 +37,6 @@ module.exports = function (config) {
     if (req.xhr || req.accepts(['json', '*/*']) === 'json') return next();
 
     const { family, major: uaVersion } = ua.parse(req.headers['user-agent']);
-    console.log(ua.parse(req.headers['user-agent']));
-
-    console.log(family, uaVersion);
 
     const tests = allTests[family.toLowerCase()];
 
