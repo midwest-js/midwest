@@ -35,7 +35,7 @@ const factories = {
     const columnsString = sqlColumns(columns);
 
     return function create(json, cb) {
-      json = _.omitBy(json, _.isUndefined);
+      json = _.pickBy(json, (value, key) => !_.isUndefined(value) && columns.includes(key));
 
       const keys = _.keys(json).map((key) => `"${_.snakeCase(key)}"`);
       const values = _.values(json);
@@ -169,6 +169,8 @@ const factories = {
     // SHOULD be used with PATCH
     return function update(id, json, cb) {
       // enable using using _hid (not that _id MUST be a ObjectId)
+
+      json = _.pickBy(json, (value, key) => columns.includes(key));
 
       if (replace) {
         _.difference(columns, _.keys(json)).forEach((key) => {
