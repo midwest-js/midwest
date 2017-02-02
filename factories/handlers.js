@@ -75,12 +75,14 @@ const factories = {
           q += ` WHERE ${where(json)}`;
         }
 
-        if (perPage) {
-          q += ` LIMIT ${perPage} OFFSET ${perPage * page}`;
-        }
-
         if (json.sort) {
           q += ` ORDER BY ${json.sort}`;
+        } else {
+          q += ' ORDER BY id DESC';
+        }
+
+        if (perPage) {
+          q += ` LIMIT ${perPage} OFFSET ${perPage * page}`;
         }
 
         q += ';';
@@ -132,10 +134,9 @@ const factories = {
   getAll(table, columns) {
     columns = sqlColumns(columns);
 
-    const query = `SELECT ${columns} FROM ${table};`;
+    const query = `SELECT ${columns} FROM ${table} ORDER BY id DESC;`;
 
     return function getAll(cb) {
-
       db.query(query, (err, result) => {
         if (err) return cb(err);
 
