@@ -40,6 +40,7 @@ const factories = {
       const keys = _.keys(json).map((key) => `"${_.snakeCase(key)}"`);
       const values = _.values(json);
 
+
       const query = `INSERT INTO ${table} (${keys.join(', ')}) VALUES (${values.map((v, i) => `$${i + 1}`).join(', ')}) RETURNING ${columnsString};`;
 
       db.query(query, values, (err, result) => {
@@ -59,6 +60,7 @@ const factories = {
     return function find(json, cb) {
       const page = Math.max(0, json.page);
       const perPage = Math.max(0, json.limit);
+      const sort = json.sort;
 
       json = _.omit(json, 'limit', 'sort', 'page');
 
@@ -75,8 +77,8 @@ const factories = {
           q += ` WHERE ${where(json)}`;
         }
 
-        if (json.sort) {
-          q += ` ORDER BY ${json.sort}`;
+        if (sort) {
+          q += ` ORDER BY ${sort}`;
         } else {
           q += ' ORDER BY id DESC';
         }
