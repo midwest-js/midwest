@@ -10,7 +10,7 @@ module.exports = function (config) {
   const allShims = [];
 
   // returns { family: [[ url, operator, majorVersion ]] }
-  const allTests = _.reduce(config, (result, value, script) => {
+  const allTests = _.reduce(config.shims, (result, value, script) => {
     value.forEach((str) => {
       // str will be 'samsung internet <= 1' or similar
       const arr = str.split(' ');
@@ -36,7 +36,28 @@ module.exports = function (config) {
   return function shim(req, res, next) {
     if (req.xhr || req.accepts(['json', '*/*']) === 'json') return next();
 
-    const { family, major: uaVersion } = ua.parse(req.headers['user-agent']);
+    let os;
+    let device;
+    let result = req.session && req.session.ua;
+
+    if (!result) {
+      result = ua.parse(req.headers['user-agent']);
+
+      if (config.os) {
+        os = result.os;
+      }
+
+      if (config.device) {
+        device = result.device;
+      }
+
+      if (config.session && req.session) {
+        req.session.ua = {};
+        Object.assign(req.session.ua, result, os && { os }, device && { device });
+      }
+    }
+
+    const { family, major: uaVersion } = ua.lookup(req.headers['user-agent']);
 
     const tests = allTests[family.toLowerCase()];
 
