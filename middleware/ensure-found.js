@@ -11,12 +11,19 @@
 
 'use strict';
 
-const _ = require('lodash');
+function isEmpty(obj) {
+  for (const prop in obj) {
+    if (prop !== 'scripts' && obj.hasOwnProperty(prop)) {
+      return false;
+    }
+  }
 
+  return true;
+}
 module.exports = function ensureFound(req, res, next) {
   // it seems most reasonable to check if res.locals is empty before res.statusCode
   // because the former is much more common
-  if (res.template || res.master || !_.isEmpty(res.locals) || res.statusCode === 204) {
+  if (res.template || res.master || !isEmpty(res.locals) || res.statusCode === 204) {
     next();
   } else {
     // generates Not Found error if there is no page to render and no truthy
