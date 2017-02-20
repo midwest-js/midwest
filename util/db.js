@@ -1,40 +1,6 @@
 'use strict';
 
 const pg = require('pg');
-const _ = require('lodash');
-
-// this is the right way to export the query method
-module.exports = (conf) => {
-  const pool = new pg.Pool(conf);
-  
-  return {
-    query(...args) {
-      pool.query(...args);
-    },
-
-    connect(cb) {
-      pool.connect(cb);
-    },
-
-    begin(cb) {
-      pool.connect((err, client, done) => {
-        if (err) return cb(err);
-
-        const instance = transaction(client);
-
-        pool.query('BEGIN;', (err) => {
-          if (err) {
-            instance.rollback(() => {
-              cb(err);
-            });
-          } else {
-            cb(null, instance);
-          }
-        });
-      });
-    },
-  };
-};
 
 function transaction(client, done) {
   return {
@@ -57,6 +23,8 @@ function transaction(client, done) {
         // transaction weird, hard to diagnose problems might happen.
 
         if (err) done(err);
+
+        cb(err);
       });
     },
 
@@ -68,7 +36,8 @@ function transaction(client, done) {
 
       client.query(query, values, (err, result) => {
         if (err) {
-          this.rollback((rollbackErr) => {
+          // TODO handle rollback error
+          this.rollback(() => {
             cb(err);
           });
         } else {
@@ -78,3 +47,35 @@ function transaction(client, done) {
     },
   };
 }
+
+module.exports = (conf) => {
+  const pool = new pg.Pool(conf);
+
+  return {
+    query(...args) {
+      pool.query(...args);
+    },
+
+    connect(cb) {
+      pool.connect(cb);
+    },
+
+    begin(cb) {
+      pool.connect((err, client, done) => {
+        if (err) return cb(err);
+
+        const instance = transaction(client, done);
+
+        pool.query('BEGIN;', (err) => {
+          if (err) {
+            instance.rollback(() => {
+              cb(err);
+            });
+          } else {
+            cb(null, instance);
+          }
+        });
+      });
+    },
+  };
+};
