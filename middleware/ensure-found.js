@@ -13,7 +13,7 @@
 
 function isEmpty(obj) {
   for (const prop in obj) {
-    if (prop !== 'scripts' && obj.hasOwnProperty(prop)) {
+    if (prop !== 'scripts' && obj[prop] != null) {
       return false;
     }
   }
