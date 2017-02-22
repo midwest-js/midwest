@@ -19,12 +19,10 @@ module.exports = (mw, identifier = mw.name || 'anonymous') => (req, res, next) =
   const _next = (...args) => {
     print(process.hrtime(start), identifier);
 
-    console.log(args);
     next(...args);
   };
 
   const start = process.hrtime();
 
-  console.log(mw);
   mw(req, res, _next);
 };
