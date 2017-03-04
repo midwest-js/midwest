@@ -2,6 +2,7 @@
  *
  * @module midwest/middleware/paginate
  */
+
 'use strict';
 
 const _ = require('lodash');
@@ -13,10 +14,10 @@ const _ = require('lodash');
  *
  * @return A middleware function
  */
-module.exports = function (fnc, perPage) {
+module.exports = (fnc, perPage) => {
   perPage = perPage || 20;
 
-  return function (req, res, next) {
+  return function paginate(req, res, next) {
     res.locals.perPage = Math.max(0, req.query.limit) || perPage;
 
     fnc(_.omit(req.query, 'limit', 'sort', 'page'), (err, count) => {
