@@ -2,20 +2,16 @@
 
 const _ = require('lodash');
 
-const handlersFactory = require('./handlers');
-
 const factories = {
   create(plural, singular, handlers) {
     return function create(req, res, next) {
-      handlers.create(req.body, (err, row) => {
-        if (err) return next(err);
-
+      handlers.create(req.body).then((row) => {
         res.set('Location', `${req.url}/${row.id}`)
           .status(201)
           .locals[singular] = row;
 
-        return next();
-      });
+        next();
+      }).catch(next);
     };
   },
 
@@ -24,19 +20,11 @@ const factories = {
   // `midwest/middleware/paginate`
   find(plural, singular, handlers) {
     return function find(req, res, next) {
-      const page = Math.max(0, req.query.page) || 0;
-      const limit = Math.max(0, req.query.limit) || res.locals.perPage;
-
-      handlers.find(Object.assign({}, req.query, {
-        page,
-        limit,
-      }), (err, rows) => {
-        if (err) return next(err);
-
+      handlers.find(req.query).then((rows) => {
         res.locals[plural] = rows;
 
         next();
-      });
+      }).catch(next);
     };
   },
 
@@ -44,41 +32,33 @@ const factories = {
     return function findById(req, res, next) {
       if (req.params.id === 'new') return void next();
 
-      handlers.findById(req.params.id, (err, row) => {
-        if (err) return next(err);
-
+      handlers.findById(req.params.id).then((row) => {
         res.locals[singular] = row;
 
-        return next();
-      });
+        next();
+      }).catch(next);
     };
   },
 
   getAll(plural, singular, handlers) {
     return function getAll(req, res, next) {
-      handlers.getAll((err, rows) => {
-        if (err) return next(err);
-
+      handlers.getAll().then((rows) => {
         res.locals[plural] = rows;
 
         return next();
-      });
+      }).catch(next);
     };
   },
 
   remove(plural, singular, handlers) {
     return function remove(req, res, next) {
-      handlers.remove(req.params.id, (err, count) => {
-        if (err) {
-          return void next(err);
-        }
-
+      handlers.remove(req.params.id).then((count) => {
         if (count > 0) {
           res.status(204);
         }
 
         next();
-      });
+      }).catch(next);
     };
   },
 
@@ -86,14 +66,12 @@ const factories = {
     // completely replaces the doc
     // SHOULD be used with PUT
     return function replace(req, res, next) {
-      handlers.replace(req.params.id, req.body, (err, row) => {
-        if (err) return void next(err);
-
+      handlers.replace(req.params.id, req.body).then((row) => {
         // TODO return different status if nothing updated
         res.status(201).locals[singular] = row;
 
         next();
-      });
+      }).catch(next);
     };
   },
 
@@ -102,14 +80,12 @@ const factories = {
     // SHOULD be used with PATCH
     return function update(req, res, next) {
       // enable using using _hid (not that _id MUST be a ObjectId)
-      handlers.update(req.params.id, req.body, (err, row) => {
-        if (err) return void next(err);
-
+      handlers.update(req.params.id, req.body).then((row) => {
         // TODO return different status if nothing updated
         res.status(201).locals[singular] = row;
 
         next();
-      });
+      }).catch(next);
     };
   },
 };

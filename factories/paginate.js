@@ -14,18 +14,19 @@ const _ = require('lodash');
  *
  * @return A middleware function
  */
-module.exports = (fnc, perPage) => {
-  perPage = perPage || 20;
-
+module.exports = (fnc, defaultLimit = 20) => {
   return function paginate(req, res, next) {
-    res.locals.perPage = Math.max(0, req.query.limit) || perPage;
+    req.query.offset = parseInt(req.query.offset, 10) || 0;
+    req.query.limit = parseInt(req.query.limit, 10) || defaultLimit;
 
-    fnc(_.omit(req.query, 'limit', 'sort', 'page'), (err, count) => {
-      if (err) return next(err);
+    fnc(_.omit(req.query, 'limit', 'sort', 'offset')).then((totalCount) => {
+      res.locals.pagination = {
+        offset: req.query.offset,
+        limit: req.query.limit,
+        totalCount,
+      };
 
-      res.locals.totalCount = count;
-
-      next(err);
-    });
+      next();
+    }).catch(next);
   };
 };

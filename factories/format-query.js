@@ -3,25 +3,12 @@
  *
  * @module midwest/middleware/format-query
  */
+
 'use strict';
 
 const _ = require('lodash');
 
 const evals = ['undefined', 'null', 'false', 'true'];
-
-const commonFilters = {
-  regex(value) {
-    return new RegExp(value, 'i');
-  },
-
-  exists(value) {
-    if (value === true) {
-      return { $ne: null };
-    }
-
-    return { $eq: null };
-  },
-};
 
 /*
  * Middleware factory.
@@ -34,24 +21,25 @@ const commonFilters = {
  *
  * @return A middleware function
  */
-module.exports = function (properties, filters, transform) {
-  // allow properties to be filtered
-  properties = _.union(properties, _.keys(filters));
 
-  filters = _.mapValues(filters, (value) => (_.isString(value) ? commonFilters[value] : value));
+const paginateProperties = ['sort', 'limit', 'offset'];
+
+module.exports = function ({ paginate, defaults, properties, filters, transform }) {
+  // allow properties to be filtered
+  properties = _.union(properties, _.keys(filters), paginate && paginateProperties);
 
   function mapQuery(value, key) {
     value = decodeURIComponent(value);
 
     // eslint-disable-next-line no-eval
-    if (evals.indexOf(value) > -1) value = eval(value);
+    if (evals.includes(value)) value = eval(value);
 
-    return filters[key] ? filters[key](value) : value;
+    return filters && filters[key] instanceof Function ? filters[key](value) : value;
   }
 
   // return the actual middleware function
   return function formatQuery(req, res, next) {
-    req.query = _.mapValues(_.pick(req.query, properties), mapQuery);
+    req.query = _.defaults(_.mapValues(_.pick(req.query, properties), mapQuery), defaults);
 
     if (transform instanceof Function) req.query = transform(req.query);
 
