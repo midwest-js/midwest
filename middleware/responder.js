@@ -63,7 +63,7 @@ const responses = {
 
 module.exports = function responder(req, res) {
   try {
-    responses[req.accepts('html', 'json', '*/*')](res);
+    responses[req.accepts(['html', 'json', '*/*'])](res);
   } catch (e) {
     const logError = require('../util/log-error');
 
