@@ -27,6 +27,8 @@ module.exports = (fnc, defaultLimit = 20) => {
       };
 
       next();
+
+      return null;
     }).catch(next);
   };
 };

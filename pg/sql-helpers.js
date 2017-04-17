@@ -3,6 +3,18 @@
 const _ = require('lodash');
 
 module.exports = {
+  as(array, table) {
+    return array.map((column) => {
+      const snakeCase = _.snakeCase(column);
+
+      if (snakeCase !== column) {
+        return `${table ? `${table}.${snakeCase}` : snakeCase} as "${column}"`;
+      }
+
+      return column;
+    });
+  },
+
   columns(array, table) {
     return array.map((column) => {
       if (Array.isArray(column)) {
@@ -14,7 +26,7 @@ module.exports = {
       let str = '';
 
       if (snakeCase !== column) {
-        str += `${_.snakeCase(column)} as "${column}"`;
+        str += `${snakeCase} as "${column}"`;
       } else {
         str += column;
       }
@@ -37,6 +49,12 @@ module.exports = {
 
       if (value === null) {
         return `${key} IS NULL`;
+      } else if (Array.isArray(value)) {
+        if (typeof value[0] === 'number') {
+          return `${key} BETWEEN ($${i + 1}::int[])[1] AND ($${i + 1}::int[])[2]`;
+        }
+
+        return `${key} @> $${i + 1}::text[]`;
       }
 
       return `${key} = $${i + 1}`;
