@@ -22,7 +22,10 @@ function extractLocation() {
 }
 
 console.log = function (...args) {
-  console.originalLog(chalk.grey(extractLocation()));
+  const location = extractLocation();
+
+  if (!location.includes('node_modules')) console.originalLog(chalk.grey(location));
+
   console.originalLog(...args);
 };
 
