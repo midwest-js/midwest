@@ -1,6 +1,5 @@
 'use strict';
 
-const _ = require('lodash');
 const pg = require('pg');
 
 function transaction(client) {
@@ -8,11 +7,9 @@ function transaction(client) {
     commit() {
       return client.query('COMMIT;').then(() => {
         client.release();
-      }).catch((err) => {
-        return this.rollback().then(() => {
-          throw err;
-        });
-      });
+      }).catch((err) => this.rollback().then(() => {
+        throw err;
+      }));
     },
 
     rollback() {
@@ -28,11 +25,10 @@ function transaction(client) {
     },
 
     query(...args) {
-      return client.query(...args).catch((err) => {
-        return this.rollback().then(() => {
+      return client.query(...args)
+        .catch((err) => this.rollback().then(() => {
           throw err;
-        });
-      });
+        }));
     },
   };
 }
@@ -41,6 +37,10 @@ module.exports = (conf) => {
   const pool = (conf instanceof pg.Pool) ? conf : new pg.Pool(conf);
 
   return {
+    end(...args) {
+      return pool.end(...args);
+    },
+
     query(...args) {
       return pool.query(...args);
     },
@@ -50,14 +50,14 @@ module.exports = (conf) => {
     },
 
     begin() {
-      return pool.connect().then((client, done) => {
+      return pool.connect().then((client) => {
         const t = transaction(client);
 
-        return t.query('BEGIN;').then(() => t).catch((err) => {
-          return t.rollback().then(() => {
+        return t.query('BEGIN;')
+          .then(() => t)
+          .catch((err) => t.rollback().then(() => {
             throw err;
-          });
-        });
+          }));
       });
     },
   };
