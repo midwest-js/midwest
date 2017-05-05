@@ -1,34 +1,15 @@
-/*
- * @module midwest/middleware/page
- */
 'use strict';
 
-const _ = require('lodash');
+module.exports = ({ props, locals }) => (req, res, next) => {
+  res.preventFlatten = true;
 
-/*
- * Middleware factory
- *
- * @param {Object} page - Page object saved to res.locals.page
- * @param {Object|Array} navigation - navigation for this particular page
- *
- * @return A middleware function
- */
-module.exports = function (page, navigation) {
-  /* we use defineProperty to avoid name collisions between page argument and
-   * page middleware function We work this hard to maintain names for
-   * middlewares so it is easier debugging the routes.
-   */
-  return Object.defineProperty((req, res, next) => {
-    res.locals.page = _.defaults({
-      routePath: page.path,
-      path: req.path,
-    }, page);
+  if (locals) {
+    Object.assign(res.locals, locals);
+  }
 
-    if (!req.xhr) {
-      res.locals.user = req.user;
-      res.locals.navigation = navigation;
-    }
+  if (props) {
+    Object.assign(res, props);
+  }
 
-    next();
-  }, 'name', { value: 'page' });
+  next();
 };
