@@ -36,7 +36,29 @@ function parseFileLocation(stack) {
  * @returns The formatted error as a plain object.
  */
 
-const allowedProperties = ['id', 'body', 'columnNumber', 'dateCreated', 'description', 'details', 'filename', 'ip', 'lineNumber', 'method', 'message', 'name', 'path', 'query', 'session', 'stack', 'status', 'statusText', 'user_id', 'userAgent', 'xhr'];
+const allowedProperties = [
+  'id',
+  'body',
+  'columnNumber',
+  'createdAt',
+  'description',
+  'details',
+  'filename',
+  'ip',
+  'lineNumber',
+  'method',
+  'message',
+  'name',
+  'path',
+  'query',
+  'session',
+  'stack',
+  'status',
+  'statusText',
+  'userId',
+  'userAgent',
+  'xhr',
+];
 
 module.exports = function (error, req) {
   // pick all important properties on Error prototype and any

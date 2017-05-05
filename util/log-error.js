@@ -16,7 +16,7 @@ const _ = require('lodash');
 const chalk = require('chalk');
 
 // modules > internal
-const colorizeStack = require('./colorize-stack');
+const colorizeStack = require('colorize-stack');
 const formatError = require('./format-error');
 
 // string added to all errors logged to console
