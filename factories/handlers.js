@@ -2,8 +2,8 @@
 
 const _ = require('lodash');
 
-const { one, many } = require('../pg/result');
-const sql = require('../pg/sql-helpers');
+const { one, many } = require('easy-postgres/result');
+const sql = require('easy-postgres/sql-helpers');
 
 const factories = {
   count(db, table) {
@@ -142,9 +142,16 @@ const factories = {
     columns = sql.columns(columns);
 
     return function findOne(json, client = db) {
-      const query = `SELECT ${columns} FROM ${table} WHERE ${sql.where(json)} LIMIT 1;`;
+      let query = `SELECT ${columns} FROM ${table}`;
 
-      const values = _.values(_.omitBy(json, _.isNil));
+      let values;
+
+      if (!_.isEmpty(json)) {
+        query += ` WHERE ${sql.where(json)}`;
+        values = _.values(_.omitBy(json, _.isNil));
+      }
+
+      query += ' LIMIT 1;';
 
       return client.query(query, values).then(one);
     };
@@ -196,6 +203,7 @@ const factories = {
 
       const query = `UPDATE ${table} SET ${keys.map((key, i) => `${key}=$${i + 1}`).join(', ')} WHERE id = $${keys.length + 1} RETURNING ${columnsString};`;
 
+      console.log(client);
       return client.query(query, [...values, id]).then((result) => {
         if (emitter) emitter.emit('db', table);
 

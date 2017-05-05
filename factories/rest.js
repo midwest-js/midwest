@@ -28,6 +28,16 @@ const factories = {
     };
   },
 
+  findOne(plural, singular, handlers) {
+    return function find(req, res, next) {
+      handlers.findOne(req.query).then((row) => {
+        res.locals[singular] = row;
+
+        next();
+      }).catch(next);
+    };
+  },
+
   findById(plural, singular, handlers) {
     return function findById(req, res, next) {
       if (req.params.id === 'new') return void next();
@@ -81,7 +91,6 @@ const factories = {
     return function update(req, res, next) {
       // enable using using _hid (not that _id MUST be a ObjectId)
       return handlers.update(req.params.id, req.body).then((row) => {
-        console.log(row);
         // TODO return different status if nothing updated
         res.status(201).locals[singular] = row;
 
