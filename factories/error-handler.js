@@ -33,7 +33,6 @@ module.exports = function (config) {
     res.status(error.status).locals = { error };
 
     if (config.post) {
-      console.log('n\n\n\n\n\npost!');
       config.post(req, res, next);
     } else {
       next();
