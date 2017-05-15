@@ -78,7 +78,7 @@ const factories = {
     return function replace(req, res, next) {
       handlers.replace(req.params.id, req.body).then((row) => {
         // TODO return different status if nothing updated
-        res.status(201).locals[singular] = row;
+        res.status(200).locals[singular] = row;
 
         next();
       }).catch(next);
@@ -92,7 +92,7 @@ const factories = {
       // enable using using _hid (not that _id MUST be a ObjectId)
       return handlers.update(req.params.id, req.body).then((row) => {
         // TODO return different status if nothing updated
-        res.status(201).locals[singular] = row;
+        res.status(200).locals[singular] = row;
 
         next();
       }).catch(next);
