@@ -203,7 +203,6 @@ const factories = {
 
       const query = `UPDATE ${table} SET ${keys.map((key, i) => `${key}=$${i + 1}`).join(', ')} WHERE id = $${keys.length + 1} RETURNING ${columnsString};`;
 
-      console.log(client);
       return client.query(query, [...values, id]).then((result) => {
         if (emitter) emitter.emit('db', table);
 
