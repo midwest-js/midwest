@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 
-const getLocation = require('../util/get-location');
+const getLocation = require('../util/get-location')
 
-module.exports = function setLocation(req, res, next) {
-  res.locals.location = getLocation(req);
+module.exports = function setLocation (req, res, next) {
+  res.locals.location = getLocation(req)
 
-  next();
-};
+  next()
+}

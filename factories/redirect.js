@@ -2,9 +2,9 @@
  *
  * @module midwest/middleware/redirect
  */
-'use strict';
+'use strict'
 
-const _ = require('lodash');
+const _ = require('lodash')
 
 /* Middleware factory
  *
@@ -15,12 +15,12 @@ const _ = require('lodash');
  */
 module.exports = function (statusCode, url) {
   if (_.isString(statusCode)) {
-    url = statusCode;
+    url = statusCode
 
-    statusCode = 302;
+    statusCode = 302
   }
 
-  return function redirect(req, res) {
-    res.redirect(statusCode, url);
-  };
-};
+  return function redirect (req, res) {
+    res.redirect(statusCode, url)
+  }
+}

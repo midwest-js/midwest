@@ -1,35 +1,35 @@
-'use strict';
+'use strict'
 
 module.exports = {
-  init(caches = {}, allowQuery = false) {
+  init (caches = {}, allowQuery = false) {
     return (req, res, next) => {
-      const [ , query ] = req.originalUrl.split('?');
+      const [ , query ] = req.originalUrl.split('?')
 
       if (allowQuery || !query) {
-        let cache = caches[req.originalUrl];
+        let cache = caches[req.originalUrl]
 
         if (!cache) {
-          cache = caches[req.originalUrl] = {};
+          cache = caches[req.originalUrl] = {}
         }
 
-        res.cache = cache;
+        res.cache = cache
 
         if (cache.locals) {
-          res.locals = Object.assign({}, cache.locals);
+          res.locals = Object.assign({}, cache.locals)
 
-          return next('route');
+          return next('route')
         }
       }
 
-      next();
-    };
+      next()
+    }
   },
 
-  store(req, res, next) {
+  store (req, res, next) {
     if (res.cache) {
-      res.cache.locals = Object.assign({}, res.locals);
+      res.cache.locals = Object.assign({}, res.locals)
     }
 
-    next();
-  },
-};
+    next()
+  }
+}

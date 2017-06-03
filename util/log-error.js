@@ -8,19 +8,19 @@
  * @module midwest/util/log-error
  */
 
-'use strict';
+'use strict'
 
-const _ = require('lodash');
+const _ = require('lodash')
 
 // modules > 3rd party
-const chalk = require('chalk');
+const chalk = require('chalk')
 
 // modules > internal
-const colorizeStack = require('colorize-stack');
-const formatError = require('./format-error');
+const colorizeStack = require('colorize-stack')
+const formatError = require('./format-error')
 
 // string added to all errors logged to console
-const prefix = `[${chalk.red('EE')}] `;
+const prefix = `[${chalk.red('EE')}] `
 
 /*
  * Default console logging function. Will be used
@@ -28,29 +28,29 @@ const prefix = `[${chalk.red('EE')}] `;
  *
  * @private
  */
-function defaultConsole(error, config) {
+function defaultConsole (error, config) {
   // note unformatted error will not have any own properties to loop over. ie,
   // format needs to be called first
-  let status;
-  let message;
+  let status
+  let message
   if (!config.all && error.status < 400) {
-    status = chalk.cyan(error.status);
+    status = chalk.cyan(error.status)
   } else if (!config.all && error.status < 500) {
-    status = chalk.yellow(error.status);
+    status = chalk.yellow(error.status)
   } else {
-    status = chalk.red(error.status);
-    message = `[${error.name}] ${error.message}`;
+    status = chalk.red(error.status)
+    message = `[${error.name}] ${error.message}`
   }
 
-  status = chalk.bold(status);
+  status = chalk.bold(status)
 
-  console.error(`${prefix}${status} ${(message || error.message)}`);
+  console.error(`${prefix}${status} ${(message || error.message)}`)
   if (error.status === 422) {
-    console.error(`${prefix}details: ${JSON.stringify(error.details, null, '  ')}`);
+    console.error(`${prefix}details: ${JSON.stringify(error.details, null, '  ')}`)
   }
 
   if (error.stack) {
-    console.error(`${prefix}${colorizeStack(error.stack.slice(error.stack.indexOf('\n') + 1)).trim()}\n`);
+    console.error(`${prefix}${colorizeStack(error.stack.slice(error.stack.indexOf('\n') + 1)).trim()}\n`)
   }
 }
 
@@ -63,29 +63,29 @@ function defaultConsole(error, config) {
  * @param {Object} config - Optional config object to override the default
  * config on a per log basis.
  */
-module.exports = function logError(error, req, config, format = false) {
+module.exports = function logError (error, req, config, format = false) {
   if (format) {
-    error = (_.isFunction(config.format) ? config.format : formatError)(error, req, config);
+    error = (_.isFunction(config.format) ? config.format : formatError)(error, req, config)
   }
 
-  let logConsole;
-  let logStore;
+  let logConsole
+  let logStore
 
   if (config.console) {
-    logConsole = _.isFunction(config.console) ? config.console : defaultConsole;
+    logConsole = _.isFunction(config.console) ? config.console : defaultConsole
   }
 
   if (_.isFunction(config.store)) {
-    logStore = config.store;
+    logStore = config.store
   }
 
   if (!config.ignore || config.ignore.indexOf(error.status) < 0) {
     if (logConsole) {
-      logConsole(error, config);
+      logConsole(error, config)
     }
 
     if (logStore) {
-      logStore(error, config);
+      logStore(error, config)
     }
   }
-};
+}

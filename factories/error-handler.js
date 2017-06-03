@@ -4,38 +4,38 @@
  * @see module:midwest/util/format-error
  * @see module:midwest/util/log-error
  */
-'use strict';
+'use strict'
 
 // modules > 3rd party
-const _ = require('lodash');
+const _ = require('lodash')
 
 // modules > internal
-const format = require('../util/format-error');
-const log = require('../util/log-error');
+const format = require('../util/format-error')
+const log = require('../util/log-error')
 
 module.exports = function (config) {
   if (!config) {
-    throw new Error('`config` required for errorHandler middleware factory');
+    throw new Error('`config` required for errorHandler middleware factory')
   }
 
-  return function errorHandler(error, req, res, next) {
-    error = format(error, req, config);
+  return function errorHandler (error, req, res, next) {
+    error = format(error, req, config)
 
-    log(error, req, config.log);
+    log(error, req, config.log)
 
     // limit what properties are sent to the client by overriding toJSON().
     if (req.isAdmin && !req.isAdmin()) {
       error.toJSON = function () {
-        return _.pick(this, config.mystify.properties);
-      };
+        return _.pick(this, config.mystify.properties)
+      }
     }
 
-    res.status(error.status).locals = { error };
+    res.status(error.status).locals = { error }
 
     if (config.post) {
-      config.post(req, res, next);
+      config.post(req, res, next)
     } else {
-      next();
+      next()
     }
-  };
-};
+  }
+}

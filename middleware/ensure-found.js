@@ -9,28 +9,28 @@
  * @module midwest/middleware/ensure-found
  */
 
-'use strict';
+'use strict'
 
-function isEmpty(obj) {
+function isEmpty (obj) {
   for (const prop in obj) {
     if (prop !== 'scripts' && obj[prop] != null) {
-      return false;
+      return false
     }
   }
 
-  return true;
+  return true
 }
-module.exports = function ensureFound(req, res, next) {
+module.exports = function ensureFound (req, res, next) {
   // it seems most reasonable to check if res.locals is empty before res.statusCode
   // because the former is much more common
   if (res.template || res.master || !isEmpty(res.locals) || res.statusCode === 204) {
-    next();
+    next()
   } else {
     // generates Not Found error if there is no page to render and no truthy
     // values in data
-    const err = new Error(`Not found: ${req.method.toUpperCase()} ${req.path}`);
-    err.status = 404;
+    const err = new Error(`Not found: ${req.method.toUpperCase()} ${req.path}`)
+    err.status = 404
 
-    next(err);
+    next(err)
   }
-};
+}

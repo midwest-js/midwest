@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 
-module.exports = function createError(message, status) {
-  const err = new Error(message);
+module.exports = function createError (message, status) {
+  const err = new Error(message)
 
-  err.status = status;
+  err.status = status
 
-  return err;
-};
+  return err
+}

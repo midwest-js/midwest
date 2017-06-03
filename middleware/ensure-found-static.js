@@ -1,15 +1,15 @@
-'use strict';
+'use strict'
 
-const regex = /\.[a-zA-Z]{1,4}$/;
+const regex = /\.[a-zA-Z]{1,4}$/
 
-module.exports = function ensureFoundStatic(req, res, next) {
+module.exports = function ensureFoundStatic (req, res, next) {
   if (regex.test(req.path)) {
-    const err = new Error(`Not found: ${req.method.toUpperCase()} ${req.path}`);
+    const err = new Error(`Not found: ${req.method.toUpperCase()} ${req.path}`)
 
-    err.status = 404;
+    err.status = 404
 
-    next(err);
+    next(err)
   } else {
-    next();
+    next()
   }
-};
+}

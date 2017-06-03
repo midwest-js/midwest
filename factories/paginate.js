@@ -3,9 +3,9 @@
  * @module midwest/middleware/paginate
  */
 
-'use strict';
+'use strict'
 
-const _ = require('lodash');
+const _ = require('lodash')
 
 /* Middleware factory
  *
@@ -15,20 +15,20 @@ const _ = require('lodash');
  * @return A middleware function
  */
 module.exports = (count, defaultLimit = 20) => {
-  return function paginate(req, res, next) {
-    req.query.offset = parseInt(req.query.offset, 10) || 0;
-    req.query.limit = parseInt(req.query.limit, 10) || defaultLimit;
+  return function paginate (req, res, next) {
+    req.query.offset = parseInt(req.query.offset, 10) || 0
+    req.query.limit = parseInt(req.query.limit, 10) || defaultLimit
 
     count(_.omit(req.query, 'limit', 'sort', 'offset')).then((totalCount) => {
       res.locals.pagination = {
         offset: req.query.offset,
         limit: req.query.limit,
-        totalCount,
-      };
+        totalCount
+      }
 
-      next();
+      next()
 
-      return null;
-    }).catch(next);
-  };
-};
+      return null
+    }).catch(next)
+  }
+}

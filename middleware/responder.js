@@ -8,16 +8,16 @@
  * @module midwest/middleware/responder
  */
 
-'use strict';
+'use strict'
 
 // modules > 3rd party
-const _ = require('lodash');
-const debug = require('debug')('midwest:responder');
+const _ = require('lodash')
+const debug = require('debug')('midwest:responder')
 
 const responses = {
-  json(res) {
+  json (res) {
     // TODO now this function is also called by '*/*'
-    debug('ACCEPTS json, returning json');
+    debug('ACCEPTS json, returning json')
 
     /* if preventFlatten is not truthy and there is only a
      * single property on `res.locals` then we should only return that
@@ -27,58 +27,58 @@ const responses = {
      * `/api/employees` returning { employees: [Employee] } or /api/employees/:id
      * returning { employee: Employee }
      */
-    res.json(!res.preventFlatten
-      && Object.keys(res.locals).length === 1 ? _.values(res.locals)[0] : res.locals
-      || {});
+    res.json(!res.preventFlatten &&
+      Object.keys(res.locals).length === 1 ? _.values(res.locals)[0] : res.locals ||
+      {})
   },
 
-  html(res) {
-    debug('ACCEPTS html, returning html');
+  html (res) {
+    debug('ACCEPTS html, returning html')
 
     if (res.template || res.master) {
-      debug('res.template or res.master set, rendering.');
+      debug('res.template or res.master set, rendering.')
 
-      return void res.render(res.template, res.master);
+      return void res.render(res.template, res.master)
     }
 
-    debug('res.template or res.master not set, sending <pre>.');
+    debug('res.template or res.master not set, sending <pre>.')
 
-    res.send(`<pre>${JSON.stringify(res.locals, null, '  ')}</pre>`);
+    res.send(`<pre>${JSON.stringify(res.locals, null, '  ')}</pre>`)
   },
 
   '*/*': function (res) {
-    debug('ACCEPTS */*...');
+    debug('ACCEPTS */*...')
 
     if (res.template || res.master) {
-      debug('res.template or res.master set, rendering.');
+      debug('res.template or res.master set, rendering.')
 
-      return void res.render(res.template, res.master);
+      return void res.render(res.template, res.master)
     }
 
-    debug('res.template or res.master not set, sending JSON.');
+    debug('res.template or res.master not set, sending JSON.')
 
-    responses.json(res);
-  },
-};
+    responses.json(res)
+  }
+}
 
-module.exports = function responder(req, res) {
+module.exports = function responder (req, res) {
   try {
-    responses[req.accepts(['html', 'json', '*/*'])](res);
+    responses[req.accepts(['html', 'json', '*/*'])](res)
   } catch (e) {
-    const logError = require('../util/log-error');
+    const logError = require('../util/log-error')
 
     // TODO maybe tag or name this error so it is easy to find responder errors.
     // these should almost never occur. it is usually due to a render error
-    console.error('[!!!] ERROR IN RESPONDER, RESPONDER ERROR');
+    console.error('[!!!] ERROR IN RESPONDER, RESPONDER ERROR')
 
-    logError(e, null, { console: true }, true);
+    logError(e, null, { console: true }, true)
 
     if (res.locals.error) {
-      console.error('[!!!] ERROR IN RESPONDER, ORIGINAL ERROR');
+      console.error('[!!!] ERROR IN RESPONDER, ORIGINAL ERROR')
 
-      logError(res.locals.error, req, { format: false, store: false });
+      logError(res.locals.error, req, { format: false, store: false })
     }
 
-    res.send((res.locals.error || e).toString());
+    res.send((res.locals.error || e).toString())
   }
-};
+}

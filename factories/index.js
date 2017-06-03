@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   bootstrap: require('./bootstrap.js'),
@@ -12,5 +12,5 @@ module.exports = {
   setLocal: require('./set-local.js'),
   setMaster: require('./set-master.js'),
   setTemplate: require('./set-template.js'),
-  shim: require('./shim.js'),
-};
+  shim: require('./shim.js')
+}

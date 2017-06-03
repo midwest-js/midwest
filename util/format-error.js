@@ -4,25 +4,25 @@
  * @module midwest/util/format-error
  */
 
-'use strict';
+'use strict'
 
 // modules > native
-const http = require('http');
+const http = require('http')
 
 // modules > 3rd party
-const _ = require('lodash');
-const debug = require('debug')('midwest:errorHandler');
+const _ = require('lodash')
+const debug = require('debug')('midwest:errorHandler')
 
-const fileLocationPattern = new RegExp(`${process.cwd()}\\/([\\/\\w-_\\.]+\\.js):(\\d*):(\\d*)`);
+const fileLocationPattern = new RegExp(`${process.cwd()}\\/([\\/\\w-_\\.]+\\.js):(\\d*):(\\d*)`)
 
 /*
  * @private
  */
 // eslint-disable-next-line consistent-return
-function parseFileLocation(stack) {
+function parseFileLocation (stack) {
   if (_.isString(stack)) {
     return _.zipObject(['filename', 'lineNumber', 'columnNumber'],
-      _.tail(stack.match(fileLocationPattern)));
+      _.tail(stack.match(fileLocationPattern)))
   }
 }
 
@@ -57,26 +57,26 @@ const allowedProperties = [
   'statusText',
   'userId',
   'userAgent',
-  'xhr',
-];
+  'xhr'
+]
 
 module.exports = function (error, req) {
   // pick all important properties on Error prototype and any
   // own properties
   // let err = _.pick(error, ['stack', 'message', 'name', ...Object.keys(error)];
 
-  let err = _.pick(error, allowedProperties);
+  let err = _.pick(error, allowedProperties)
 
-  const nonStandardProperties = _.difference(Object.keys(error), allowedProperties);
+  const nonStandardProperties = _.difference(Object.keys(error), allowedProperties)
 
   if (nonStandardProperties.length) {
-    err.details = Object.assign({}, err.details, _.pick(error, nonStandardProperties));
+    err.details = Object.assign({}, err.details, _.pick(error, nonStandardProperties))
   }
 
-  debug(`unformatted error: ${JSON.stringify(error, null, '\t')}`);
+  debug(`unformatted error: ${JSON.stringify(error, null, '\t')}`)
 
-  err.status = err.status || 500;
-  err.statusText = http.STATUS_CODES[err.status];
+  err.status = err.status || 500
+  err.statusText = http.STATUS_CODES[err.status]
 
   if (req) {
     _.assignIn(err, {
@@ -84,34 +84,34 @@ module.exports = function (error, req) {
       method: req.method,
       ip: req.ip,
       user_id: req.user && req.user.id,
-      userAgent: req.headers['user-agent'],
-    });
+      userAgent: req.headers['user-agent']
+    })
 
-    err.xhr = req.xhr;
+    err.xhr = req.xhr
 
     // We mapKeys because Mongo does not allow keys with dots stored to DB.
-    if (!_.isEmpty(req.body)) err.body = _.mapKeys(req.body, (value, key) => key.replace('.', 'DOT'));
-    if (!_.isEmpty(req.query)) err.query = req.query;
+    if (!_.isEmpty(req.body)) err.body = _.mapKeys(req.body, (value, key) => key.replace('.', 'DOT'))
+    if (!_.isEmpty(req.query)) err.query = req.query
   }
 
   if (error.name === 'ValidationError') {
-    err.status = 422;
+    err.status = 422
 
-    err.details = _.assignIn(err.details, { validationErrors: _.map(error.errors, 'message') });
+    err.details = _.assignIn(err.details, { validationErrors: _.map(error.errors, 'message') })
 
-    delete err.errors;
+    delete err.errors
   }
 
   if (err.status >= 500) {
-    _.defaults(err, parseFileLocation(err.stack));
+    _.defaults(err, parseFileLocation(err.stack))
   } else {
-    delete err.stack;
+    delete err.stack
   }
 
   // sort properties by name
-  err = _.fromPairs(_.sortBy(_.toPairs(err), (pair) => pair[0]));
+  err = _.fromPairs(_.sortBy(_.toPairs(err), (pair) => pair[0]))
 
-  debug(`formatted error: ${JSON.stringify(err, null, '\t')}`);
+  debug(`formatted error: ${JSON.stringify(err, null, '\t')}`)
 
-  return err;
-};
+  return err
+}

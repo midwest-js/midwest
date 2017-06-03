@@ -5,28 +5,28 @@
  * @module midwest/middleware/bootstrap
  */
 
-'use strict';
+'use strict'
 
-const _ = require('lodash');
+const _ = require('lodash')
 
-const defaultOmit = ['settings'];
+const defaultOmit = ['settings']
 
 module.exports = function (pick, omit, property = 'INITIAL_STATE') {
-  omit = omit ? defaultOmit.concat(omit) : defaultOmit;
+  omit = omit ? defaultOmit.concat(omit) : defaultOmit
 
-  return function bootstrap(req, res, next) {
+  return function bootstrap (req, res, next) {
     if (!req.xhr && req.accepts(['json', '*/*']) === '*/*') {
-      let obj = Object.assign({}, res.app.locals, res.locals);
+      let obj = Object.assign({}, res.app.locals, res.locals)
 
       if (pick) {
-        obj = _.pick(obj, pick);
+        obj = _.pick(obj, pick)
       } else {
-        obj = _.omit(obj, omit);
+        obj = _.omit(obj, omit)
       }
 
-      res.locals[property] = JSON.stringify(obj);
+      res.locals[property] = JSON.stringify(obj)
     }
 
-    next();
-  };
-};
+    next()
+  }
+}
