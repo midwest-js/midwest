@@ -1,33 +1,22 @@
 'use strict'
 
-/*
- * The main file that sets up the Express instance and node
- *
- * @module server/server
- * @type {Express instance}
- */
-
-// set up some globals (these are also set in Epiphany if not already set)
-global.process.env.NODE_ENV = process.env.NODE_process.env.NODE_ENV || 'development'
-global.PWD = process.env.NODE_PWD || process.cwd()
-
-// output filename in console log and colour console.dir
-if (process.env.NODE_ENV === 'development') {
-  require('midwest/util/console')
-}
-
-// make node understand `*.jsx` files
-require('jsx-node/node-require').install()
+process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 
 // modules > native
 const p = require('path')
 
+const projectRoot = p.dirname(__dirname)
+
+if (process.env.NODE_ENV === 'development') {
+  // output filename in console log and colour console.dir
+  require('console-filename')
+  // needed so symlinked modules get access to main projects node_modules/
+  require('app-module-path').addPath(p.join(projectRoot, 'node_modules'))
+}
+
 // modules > 3rd party
-const _ = require('lodash')
 const chalk = require('chalk')
 const express = require('express')
-const mongoose = require('mongoose')
-const passport = require('passport')
 const requireDir = require('require-dir')
 
 // modules > express middlewares
@@ -36,9 +25,7 @@ const session = require('express-session')
 const cookieParser = require('cookie-parser')
 
 // modules > midwest
-const colorizeStack = require('midwest/util/colorize-stack')
-
-const config = requireDir('./config')
+const colorizeStack = require('colorize-stack')
 
 // make error output stack pretty
 process.on('uncaughtException', (err) => {
@@ -51,30 +38,10 @@ process.on('uncaughtException', (err) => {
   process.exit(1)
 })
 
-const prewares = [
-  express.static(config.dir.static, process.env.NODE_ENV === 'production' ? { maxAge: '1 year' } : null),
-  bodyParser.json(),
-  bodyParser.urlencoded({ extended: true }),
-  cookieParser(),
-  session(config.session),
-  passport.initialize(),
-  passport.session()
-]
-
-if (process.env.NODE_ENV === 'development') {
-  // only log requests to console in development mode
-  prewares.unshift(require('morgan')('dev'))
-  // automatically login global.LOGIN_USER
-  prewares.push(require('midwest-module-membership/passport/automatic-login'))
-}
-
-const postwares = [
-  require('midwest/middleware/ensure-found'),
-  // transform and log error
-  require('midwest/middleware/error-handler'),
-  // respond
-  require('midwest/middleware/responder')
-]
+const config = requireDir('./config', { camelcase: true })
+const emitter = require('./emitter')
+const db = require('./db')
+const state = { config, db, emitter }
 
 const server = express()
 
@@ -82,58 +49,46 @@ const server = express()
 server.set('trust proxy', true)
 
 Object.assign(server.locals, {
-  site: require('./config/site')
+  site: config.site
 })
 
 // override default response render method for
-// more convenient use with JSX files (only "dump" components)
-server.response.render = function (template) {
-  const locals = Object.assign({}, server.locals, this.locals)
+// more convenient use with marko
+server.response.render = require('./render')
 
-  this.send(template(locals))
+const prewares = [
+  express.static(config.dir.static, process.env.NODE_ENV === 'production' ? { maxAge: '1 year' } : null),
+  bodyParser.json(),
+  bodyParser.urlencoded({ extended: true }),
+  cookieParser(),
+  session(config.session)
+]
+
+if (process.env.NODE_ENV === 'development') {
+  // only log requests to console in development mode
+  prewares.unshift(require('morgan')('dev'))
 }
 
-try {
-  server.locals.js = require(p.join(PWD, 'public/js.json'))
-} catch (e) {}
+const postwares = [
+  require('midwest/middleware/ensure-found'),
+  // transform and log error
+  require('midwest/factories/error-handler')(config.errorHandler),
+  // respond
+  require('midwest/middleware/responder')
+]
 
-try {
-  server.locals.css = require(p.join(PWD, 'public/css.json'))
-} catch (e) {}
-
-// load all prewares
+// mount prewares
 server.use(...prewares)
 
-// routes > pages
-server.use(require('./pages'))
+// mount routers
+server.use(require('./routers/index')(state))
+server.use('/api', require('./routers/api')(state))
 
-// routes > authentication
-server.use('/auth', require('midwest-module-membership/passport/router'))
-
-// routes > api > membership
-server.use('/api/roles', require('midwest-module-membership/services/roles/router'))
-server.use('/api/permissions', require('midwest-module-membership/services/permissions/router'))
-server.use('/api/invites', require('midwest-module-membership/services/invites/router'))
-server.use('/api/users', require('midwest-module-membership/services/users/router'))
-
-// load all postwares
+// mount postwares
 server.use(...postwares)
 
-// mpromise (built in mongoose promise library) is deprecated,
-// tell mongoose to use native Promises instead
-mongoose.Promise = Promise
-// connect to mongodb
-mongoose.connect(config.mongo.uri, _.omit(config.mongo, 'uri'), (err) => {
-  if (err) {
-    console.error(err)
-    process.exit()
-  }
-
-  console.info(`[${chalk.cyan('INIT')}] Mongoose is connected.`)
-})
-
 // Only start Express server when it is the main module (ie not required by test)
-if (require.main === module) {
+if (!module.parent) {
   server.http = server.listen(config.port, () => {
     console.info(`[${chalk.cyan('INIT')}] HTTP Server listening on port ${chalk.magenta(config.port)} (${chalk.yellow(process.env.NODE_ENV)})`)
   })
