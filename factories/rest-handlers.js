@@ -23,6 +23,27 @@ const factories = {
     }
   },
 
+  create (db, table, columns, emitter) {
+    const columnsString = sql.columns(columns)
+
+    return function create (json, client = db) {
+      json = _.pickBy(json, (value, key) => !_.isUndefined(value) && columns.includes(key))
+
+      const keys = _.keys(json).map((key) => `"${_.snakeCase(key)}"`)
+      const values = _.values(json)
+
+      const query = `INSERT INTO ${table} (${keys.join(', ')}) VALUES (${values.map((v, i) => `$${i + 1}`).join(', ')}) RETURNING ${columnsString};`
+
+      return client.query(query, values).then((result) => {
+        const item = result.rows[0]
+
+        if (emitter) emitter.emit('db', { table, action: 'create', item })
+
+        return item
+      })
+    }
+  },
+
   createMany (db, table, columns, emitter) {
     const columnsString = sql.columns(columns)
 
@@ -59,28 +80,9 @@ const factories = {
       const query = `INSERT INTO ${table} (${keys.join(', ')}) VALUES (${str}) RETURNING ${columnsString};`
 
       return client.query(query, values).then((result) => {
-        if (emitter) emitter.emit('db', table)
+        if (emitter) emitter.emit('db', { table, action: 'create', item: result.rows })
 
-        return result.rows[0]
-      })
-    }
-  },
-
-  create (db, table, columns, emitter) {
-    const columnsString = sql.columns(columns)
-
-    return function create (json, client = db) {
-      json = _.pickBy(json, (value, key) => !_.isUndefined(value) && columns.includes(key))
-
-      const keys = _.keys(json).map((key) => `"${_.snakeCase(key)}"`)
-      const values = _.values(json)
-
-      const query = `INSERT INTO ${table} (${keys.join(', ')}) VALUES (${values.map((v, i) => `$${i + 1}`).join(', ')}) RETURNING ${columnsString};`
-
-      return client.query(query, values).then((result) => {
-        if (emitter) emitter.emit('db', table)
-
-        return result.rows[0]
+        return result.rows
       })
     }
   },
@@ -171,7 +173,7 @@ const factories = {
 
     return function remove (id, client = db) {
       return client.query(query, [id]).then((result) => {
-        if (emitter) emitter.emit('db', table)
+        if (emitter) emitter.emit('db', { table, action: 'delete', item: result.rows[0] })
 
         return result.rowCount
       })
@@ -203,9 +205,9 @@ const factories = {
       const query = `UPDATE ${table} SET ${keys.map((key, i) => `${key}=$${i + 1}`).join(', ')} WHERE id = $${keys.length + 1} RETURNING ${columnsString};`
 
       return client.query(query, [...values, id]).then((result) => {
-        if (emitter) emitter.emit('db', table)
+        if (emitter) emitter.emit('db', {table, action: 'update', item: result.rows[0]})
 
-        return result
+        return result.rows[0]
       })
     }
   }
