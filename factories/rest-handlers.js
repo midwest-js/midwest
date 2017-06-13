@@ -183,9 +183,9 @@ const factories = {
   // completely replaces the doc
   // SHOULD be used with PUT
   replace (db, table, columns, emitter) {
-        // _.difference(columns, _.keys(json)).forEach((key) => {
-        //   json[key] = null;
-        // });
+    // _.difference(columns, _.keys(json)).forEach((key) => {
+    //   json[key] = null;
+    // });
     return this.update(db, table, columns, emitter)
   },
 
