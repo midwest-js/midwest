@@ -38,11 +38,11 @@ const factories = {
     }
   },
 
-  findById (plural, singular, handlers) {
+  findById (plural, singular, handlers, idParam = 'id') {
     return function findById (req, res, next) {
-      if (req.params.id === 'new') return void next()
+      if (req.param[idParam] === 'new') return void next()
 
-      handlers.findById(req.params.id).then((row) => {
+      handlers.findById(req.params[idParam]).then((row) => {
         res.locals[singular] = row
 
         next()
@@ -60,9 +60,9 @@ const factories = {
     }
   },
 
-  remove (plural, singular, handlers) {
+  remove (plural, singular, handlers, idParam = 'id') {
     return function remove (req, res, next) {
-      handlers.remove(req.params.id).then((count) => {
+      handlers.remove(req.params[idParam]).then((count) => {
         if (count > 0) {
           res.status(204)
         }
@@ -72,11 +72,11 @@ const factories = {
     }
   },
 
-  replace (plural, singular, handlers) {
+  replace (plural, singular, handlers, idParam = 'id') {
     // completely replaces the doc
     // SHOULD be used with PUT
     return function replace (req, res, next) {
-      handlers.replace(req.params.id, req.body).then((row) => {
+      handlers.replace(req.params[idParam], req.body).then((row) => {
         // TODO return different status if nothing updated
         res.status(200).locals[singular] = row
 
@@ -85,12 +85,12 @@ const factories = {
     }
   },
 
-  update (plural, singular, handlers) {
+  update (plural, singular, handlers, idParam = 'id') {
     // changes properties passed on req.body
     // SHOULD be used with PATCH
     return function update (req, res, next) {
       // enable using using _hid (not that _id MUST be a ObjectId)
-      return handlers.update(req.params.id, req.body).then((row) => {
+      return handlers.update(req.params[idParam], req.body).then((row) => {
         // TODO return different status if nothing updated
         res.status(200).locals[singular] = row
 
@@ -102,7 +102,7 @@ const factories = {
 
 const all = Object.keys(factories)
 
-module.exports = ({ plural, singular, handlers }) => {
+module.exports = ({ plural, singular, handlers, idParam }) => {
   singular = singular || plural.slice(0, -1)
 
   const missing = _.difference(all, Object.keys(handlers))
@@ -115,7 +115,7 @@ module.exports = ({ plural, singular, handlers }) => {
 
   return include.reduce((result, value) => {
     if (factories[value]) {
-      result[value] = factories[value](plural, singular, handlers)
+      result[value] = factories[value](plural, singular, handlers, idParam)
     }
 
     return result
