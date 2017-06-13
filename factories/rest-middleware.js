@@ -3,7 +3,7 @@
 const _ = require('lodash')
 
 const factories = {
-  create (plural, singular, handlers) {
+  create ({ plural, singular, handlers }) {
     return function create (req, res, next) {
       handlers.create(req.body).then((row) => {
         res.set('Location', `${req.url}/${row.id}`)
@@ -18,7 +18,7 @@ const factories = {
   // use req.query to query database.
   // should probably be used with `midwest/middleware/format-query` and/or
   // `midwest/middleware/paginate`
-  find (plural, singular, handlers) {
+  find ({ plural, singular, handlers }) {
     return function find (req, res, next) {
       handlers.find(req.query).then((rows) => {
         res.locals[plural] = rows
@@ -28,7 +28,7 @@ const factories = {
     }
   },
 
-  findOne (plural, singular, handlers) {
+  findOne ({ plural, singular, handlers }) {
     return function find (req, res, next) {
       handlers.findOne(req.query).then((row) => {
         res.locals[singular] = row
@@ -50,7 +50,7 @@ const factories = {
     }
   },
 
-  getAll (plural, singular, handlers) {
+  getAll ({ plural, singular, handlers }) {
     return function getAll (req, res, next) {
       handlers.getAll().then((rows) => {
         res.locals[plural] = rows
@@ -60,7 +60,7 @@ const factories = {
     }
   },
 
-  remove (plural, singular, handlers, idParam = 'id') {
+  remove ({ plural, singular, handlers, idParam = 'id' }) {
     return function remove (req, res, next) {
       handlers.remove(req.params[idParam]).then((count) => {
         if (count > 0) {
@@ -72,7 +72,7 @@ const factories = {
     }
   },
 
-  replace (plural, singular, handlers, idParam = 'id') {
+  replace ({ plural, singular, handlers, idParam = 'id' }) {
     // completely replaces the doc
     // SHOULD be used with PUT
     return function replace (req, res, next) {
@@ -85,7 +85,7 @@ const factories = {
     }
   },
 
-  update (plural, singular, handlers, idParam = 'id') {
+  update ({ plural, singular, handlers, idParam = 'id' }) {
     // changes properties passed on req.body
     // SHOULD be used with PATCH
     return function update (req, res, next) {
@@ -115,7 +115,7 @@ module.exports = ({ plural, singular, handlers, idParam }) => {
 
   return include.reduce((result, value) => {
     if (factories[value]) {
-      result[value] = factories[value](plural, singular, handlers, idParam)
+      result[value] = factories[value]({ plural, singular, handlers, idParam })
     }
 
     return result
