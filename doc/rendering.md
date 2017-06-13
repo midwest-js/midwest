@@ -72,3 +72,35 @@ module.exports = function (Component, Master) {
   this.send(preamble ? preamble + html : html);
 };
 ```
+
+## Factory
+
+Extending the response prototype:
+
+```js
+server.response.render = require('midwest/factories/render')({
+  h: require('preact').h,
+  render: require('preact-render-to-string').render,
+})
+```
+
+or extending the response instance:
+
+```js
+const render = require('midwest/factories/render')({
+  h: React.createElement,
+  render: ReactDOMServer.renderToString
+})
+
+router.use('/', (req, res) => {
+  res.render = render
+
+  res.master = master
+  res.templates = [
+    Layout,
+    IndexPage,
+  ]
+
+  next()
+})
+```

@@ -35,10 +35,12 @@ const responses = {
   html (res) {
     debug('ACCEPTS html, returning html')
 
-    if (res.template || res.master) {
-      debug('res.template or res.master set, rendering.')
+    if (res.templates || res.master) {
+      debug('res.templates or res.master set, rendering.')
 
-      return void res.render(res.template, res.master)
+      const templates = res.templates || []
+
+      return void res.render(res.master, ...templates)
     }
 
     debug('res.template or res.master not set, sending <pre>.')
@@ -49,10 +51,12 @@ const responses = {
   '*/*': function (res) {
     debug('ACCEPTS */*...')
 
-    if (res.template || res.master) {
-      debug('res.template or res.master set, rendering.')
+    if (res.templates || res.master) {
+      debug('res.templates or res.master set, rendering.')
 
-      return void res.render(res.template, res.master)
+      const templates = res.templates || []
+
+      return void res.render(res.master, ...templates)
     }
 
     debug('res.template or res.master not set, sending JSON.')
@@ -62,6 +66,10 @@ const responses = {
 }
 
 module.exports = function responder (req, res) {
+  if (res.template && !res.templates) {
+    res.templates = [ res.template ]
+  }
+
   try {
     responses[req.accepts(['html', 'json', '*/*'])](res)
   } catch (e) {
