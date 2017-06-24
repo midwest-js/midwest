@@ -1,9 +1,32 @@
 'use strict'
 
-module.exports = function createError (message, status) {
-  const err = new Error(message)
+const _ = require('lodash')
 
-  err.status = status
+module.exports = function createError (message, status) {
+  let props
+  let Constructor = Error
+
+  if (_.isPlainObject(message)) {
+    props = _.omit(message, 'message')
+
+    if (message.constructor) {
+      Constructor = props.constructor
+    }
+
+    message = message.message || 'Error'
+  } else {
+    props = {}
+  }
+
+  if (_.isPlainObject(status)) {
+    Object.assign(props, status)
+  } else if (typeof status === 'number') {
+    props.status = status
+  }
+
+  const err = new Constructor(message)
+
+  Object.assign(err, props)
 
   return err
 }
