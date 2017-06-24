@@ -6,7 +6,7 @@ const { one, many } = require('easy-postgres/result')
 const sql = require('easy-postgres/sql-helpers')
 
 const factories = {
-  count (db, table) {
+  count ({ db, table }) {
     return function count (json, client = db) {
       let query = `SELECT count(id) FROM ${table}`
 
@@ -14,7 +14,7 @@ const factories = {
 
       if (Object.keys(json).length) {
         query += ` WHERE ${sql.where(json)}`
-        values = _.values(_.omitBy(json, _.isNil))
+        values = Object.values(_.omitBy(json, _.isNil))
       }
 
       query += ';'
@@ -23,14 +23,19 @@ const factories = {
     }
   },
 
-  create (db, table, columns, emitter) {
+  create ({ db, table, columns, emitter, mapKeys }) {
     const columnsString = sql.columns(columns)
 
     return function create (json, client = db) {
       json = _.pickBy(json, (value, key) => !_.isUndefined(value) && columns.includes(key))
 
-      const keys = _.keys(json).map((key) => `"${_.snakeCase(key)}"`)
-      const values = _.values(json)
+      let keys = Object.keys(json)
+
+      if (mapKeys) {
+        keys = keys.map(mapKeys)
+      }
+
+      const values = Object.values(json)
 
       const query = `INSERT INTO ${table} (${keys.join(', ')}) VALUES (${values.map((v, i) => `$${i + 1}`).join(', ')}) RETURNING ${columnsString};`
 
@@ -44,7 +49,7 @@ const factories = {
     }
   },
 
-  createMany (db, table, columns, emitter) {
+  createMany ({ db, table, columns, emitter, mapKeys }) {
     const columnsString = sql.columns(columns)
 
     return function create (collection, client = db) {
@@ -73,7 +78,9 @@ const factories = {
         return arr
       }).map((arr) => arr.map((value) => value !== undefined ? value : 'DEFAULT'))
 
-      keys = keys.map((key) => `"${_.snakeCase(key)}"`)
+      if (mapKeys) {
+        keys = keys.map(mapKeys)
+      }
 
       const str = values.map((arr) => arr.join(', ')).join('), (')
 
@@ -90,7 +97,7 @@ const factories = {
   // use req.query to query database.
   // should probably be used with `midwest/middleware/format-query` and/or
   // `midwest/middleware/paginate`
-  find (db, table, columns, emitter, defaults = {}) {
+  find ({ db, table, columns, emitter, defaults = {} }) {
     const columnsString = sql.columns(columns)
 
     return function find (json, client = db) {
@@ -120,13 +127,13 @@ const factories = {
 
       q += ';'
 
-      const values = _.values(_.omitBy(json, _.isNil))
+      const values = Object.values(_.omitBy(json, _.isNil))
 
       return client.query(q, values).then(many)
     }
   },
 
-  findById (db, table, columns) {
+  findById ({ db, table, columns }) {
     columns = sql.columns(columns)
 
     return function findById (id, client = db) {
@@ -139,7 +146,7 @@ const factories = {
     }
   },
 
-  findOne (db, table, columns) {
+  findOne ({ db, table, columns }) {
     columns = sql.columns(columns)
 
     return function findOne (json, client = db) {
@@ -149,7 +156,7 @@ const factories = {
 
       if (!_.isEmpty(json)) {
         query += ` WHERE ${sql.where(json)}`
-        values = _.values(_.omitBy(json, _.isNil))
+        values = Object.values(_.omitBy(json, _.isNil))
       }
 
       query += ' LIMIT 1;'
@@ -158,7 +165,7 @@ const factories = {
     }
   },
 
-  getAll (db, table, columns) {
+  getAll ({ db, table, columns }) {
     columns = sql.columns(columns)
 
     const query = `SELECT ${columns} FROM ${table} ORDER BY id DESC;`
@@ -168,7 +175,7 @@ const factories = {
     }
   },
 
-  remove (db, table, columns, emitter) {
+  remove ({ db, table, columns, emitter }) {
     const query = `DELETE FROM ${table} WHERE id = $1;`
 
     return function remove (id, client = db) {
@@ -182,14 +189,14 @@ const factories = {
 
   // completely replaces the doc
   // SHOULD be used with PUT
-  replace (db, table, columns, emitter) {
-    // _.difference(columns, _.keys(json)).forEach((key) => {
+  replace ({ db, table, columns, emitter }) {
+    // _.difference(columns, Object.keys(json)).forEach((key) => {
     //   json[key] = null;
     // });
-    return this.update(db, table, columns, emitter)
+    return this.update({ db, table, columns, emitter })
   },
 
-  update (db, table, columns, emitter) {
+  update ({ db, table, columns, emitter, mapKeys }) {
     const columnsString = sql.columns(columns)
 
     // changes properties passed on req.body
@@ -199,8 +206,13 @@ const factories = {
 
       json = _.pickBy(json, (value, key) => columns.includes(key))
 
-      const keys = _.keys(json).map((key) => `"${_.snakeCase(key)}"`)
-      const values = _.values(json)
+      let keys = Object.keys(json)
+
+      if (mapKeys) {
+        keys = keys.map(mapKeys)
+      }
+
+      const values = Object.values(json)
 
       const query = `UPDATE ${table} SET ${keys.map((key, i) => `${key}=$${i + 1}`).join(', ')} WHERE id = $${keys.length + 1} RETURNING ${columnsString};`
 
@@ -215,14 +227,24 @@ const factories = {
 
 const all = Object.keys(factories)
 
-module.exports = ({ defaults, db, emitter, table, columns, exclude, include }) => {
+module.exports = ({ db, emitter, table, columns, exclude, include, camelCase = true, mapKeys }) => {
   // if (db instanceof pg.Pool || _.isPlainObject(db)) db = dbFactory(db);
+
+  if (camelCase && !mapKeys) {
+    mapKeys = (key) => `"${_.snakeCase(key)}"`
+  }
 
   include = include || _.difference(all, exclude)
 
   return include.reduce((result, value) => {
     if (factories[value]) {
-      result[value] = factories[value](db, table, columns, emitter, defaults && Object.assign({}, defaults.all, defaults[value]))
+      result[value] = factories[value]({
+        mapKeys,
+        columns,
+        db,
+        emitter,
+        table
+      })
     }
 
     return result

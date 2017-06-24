@@ -38,9 +38,9 @@ const factories = {
     }
   },
 
-  findById (plural, singular, handlers, idParam = 'id') {
+  findById ({ plural, singular, handlers, idParam = 'id' }) {
     return function findById (req, res, next) {
-      if (req.param[idParam] === 'new') return void next()
+      if (req.params[idParam] === 'new') return void next()
 
       handlers.findById(req.params[idParam]).then((row) => {
         res.locals[singular] = row
