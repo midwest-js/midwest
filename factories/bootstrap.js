@@ -11,8 +11,10 @@ const _ = require('lodash')
 
 const defaultOmit = ['settings']
 
-module.exports = function (pick, omit, property = 'INITIAL_STATE') {
-  omit = omit ? defaultOmit.concat(omit) : defaultOmit
+module.exports = function ({ pick, omit, property = 'INITIAL_STATE' }) {
+  if (!pick) {
+    omit = omit ? defaultOmit.concat(omit) : defaultOmit
+  }
 
   return function bootstrap (req, res, next) {
     if (!req.xhr && req.accepts(['json', '*/*']) === '*/*') {
