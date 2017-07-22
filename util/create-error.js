@@ -4,13 +4,13 @@ const _ = require('lodash')
 
 module.exports = function createError (message, status) {
   let props
-  let Constructor = Error
+  let ErrorConstructor = Error
 
   if (_.isPlainObject(message)) {
     props = _.omit(message, 'message')
 
-    if (message.constructor) {
-      Constructor = props.constructor
+    if (message.errorConstructor) {
+      ErrorConstructor = props.errorConstructor
     }
 
     message = message.message || 'Error'
@@ -24,7 +24,7 @@ module.exports = function createError (message, status) {
     props.status = status
   }
 
-  const err = new Constructor(message)
+  const err = new ErrorConstructor(message)
 
   Object.assign(err, props)
 
