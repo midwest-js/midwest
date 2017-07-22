@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = ({ h, render, Provider, createStore }) => {
+module.exports = ({ h, render, Provider, createStore, store }) => {
   return function (Master, ...Components) {
     // warning: without a full merge the following will allow master or
     // components to mutate the locals. but that shoulds really matter.
@@ -21,10 +21,9 @@ module.exports = ({ h, render, Provider, createStore }) => {
         return h(Component, locals, result)
       }, null)
 
-      if (Provider && createStore) {
-        console.log('Provider and createStore!')
+      if (Provider && (store || createStore)) {
         dom = h(Provider, Object.assign({
-          store: createStore(locals)
+          store: store || createStore(locals)
         }), dom)
       }
 
