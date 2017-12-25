@@ -18,23 +18,12 @@ const fileLocationPattern = new RegExp(`${process.cwd()}\\/([\\/\\w-_\\.]+\\.js)
 /*
  * @private
  */
-// eslint-disable-next-line consistent-return
 function parseFileLocation (stack) {
   if (_.isString(stack)) {
     return _.zipObject(['filename', 'lineNumber', 'columnNumber'],
       _.tail(stack.match(fileLocationPattern)))
   }
 }
-
-/*
- * Formats an error and converts it to a plain object.
- *
- * @param {Error} error - Error to be logged
- * @param {IncomingMessage} req - Request object of current request.
- * Used to add additional info to error such as logged in user.
- *
- * @returns The formatted error as a plain object.
- */
 
 const allowedProperties = [
   'id',
@@ -60,16 +49,22 @@ const allowedProperties = [
   'xhr'
 ]
 
-module.exports = function (error, req) {
-  // pick all important properties on Error prototype and any
-  // own properties
-  // let err = _.pick(error, ['stack', 'message', 'name', ...Object.keys(error)];
-
+/*
+ * Formats an error and converts it to a plain object.
+ *
+ * @param {Error} error - Error to be logged
+ * @param {IncomingMessage} req - Request object of current request.
+ * Used to add additional info to error such as logged in user.
+ *
+ * @returns The formatted error as a plain object.
+ */
+module.exports = function formatError (error, req) {
   let err = _.pick(error, allowedProperties)
 
   const nonStandardProperties = _.difference(Object.keys(error), allowedProperties)
 
   if (nonStandardProperties.length) {
+    // set any properties not in `allowedProperties` in details
     err.details = Object.assign({}, err.details, _.pick(error, nonStandardProperties))
   }
 
@@ -79,7 +74,7 @@ module.exports = function (error, req) {
   err.statusText = http.STATUS_CODES[err.status]
 
   if (req) {
-    _.assignIn(err, {
+    _.assign(err, {
       path: req.path,
       method: req.method,
       ip: req.ip,
@@ -103,6 +98,7 @@ module.exports = function (error, req) {
   }
 
   if (err.status >= 500) {
+    // use defaults in case any of the location props are already set
     _.defaults(err, parseFileLocation(err.stack))
   } else {
     delete err.stack
