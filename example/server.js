@@ -49,7 +49,7 @@ const server = express()
 server.set('trust proxy', true)
 
 Object.assign(server.locals, {
-  site: config.site
+  site: config.site,
 })
 
 // override default response render method for
@@ -61,7 +61,7 @@ const prewares = [
   bodyParser.json(),
   bodyParser.urlencoded({ extended: true }),
   cookieParser(),
-  session(config.session)
+  session(config.session),
 ]
 
 if (process.env.NODE_ENV === 'development') {
@@ -74,7 +74,7 @@ const postwares = [
   // transform and log error
   require('midwest/factories/error-handler')(config.errorHandler),
   // respond
-  require('midwest/middleware/responder')
+  require('midwest/middleware/responder'),
 ]
 
 // mount prewares

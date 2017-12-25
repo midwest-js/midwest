@@ -46,7 +46,7 @@ module.exports = function logEntry (message, req, config) {
     LogEntry.create({
       dateCreated: date,
       message,
-      user: req && req.user && req.user.id
+      user: req && req.user && req.user.id,
     }, (err) => {
       // TODO handle errors in error handler better
       if (err) {

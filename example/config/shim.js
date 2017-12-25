@@ -12,7 +12,7 @@ module.exports = {
     'opera <= 12',
     'safari <= 5',
     'mobile safari <= 5',
-    'samsung internet <= 1'
+    'samsung internet <= 1',
   ],
   'https://cdnjs.cloudflare.com/ajax/libs/es6-shim/0.35.1/es6-shim.min.js': [
     'chrome <= 51',
@@ -26,7 +26,7 @@ module.exports = {
     'ie mobile <= 11',
     'safari <= 9',
     'mobile safari <= 9',
-    'samsung internet <= 2'
+    'samsung internet <= 2',
   ],
   'https://unpkg.com/es7-shim@latest/dist/es7-shim.min.js': [
     'chrome <= 50',
@@ -40,7 +40,7 @@ module.exports = {
     'ie mobile <= 11',
     'safari <= 10',
     'mobile safari <= 10',
-    'samsung internet <= 3'
+    'samsung internet <= 3',
   ],
   'https://cdnjs.cloudflare.com/ajax/libs/fetch/1.0.0/fetch.min.js': [
     'chrome <= 41',
@@ -54,6 +54,6 @@ module.exports = {
     'ie mobile <= 11',
     'safari <= 9',
     'mobile safari <= 9',
-    'samsung internet <= 3'
-  ]
+    'samsung internet <= 3',
+  ],
 }

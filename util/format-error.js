@@ -46,7 +46,7 @@ const allowedProperties = [
   'statusText',
   'userId',
   'userAgent',
-  'xhr'
+  'xhr',
 ]
 
 /*
@@ -79,7 +79,7 @@ module.exports = function formatError (error, req) {
       method: req.method,
       ip: req.ip,
       user_id: req.user && req.user.id,
-      userAgent: req.headers['user-agent']
+      userAgent: req.headers['user-agent'],
     })
 
     err.xhr = req.xhr

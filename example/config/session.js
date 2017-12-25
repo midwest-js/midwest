@@ -8,12 +8,12 @@ let redisStore
 const config = {
   secret: 'thisisacompletelyrandomgeneratedstring.thisisonlyacoincidence.089hsdhdfhfhshaghag9`8716`9356`97612348972193487',
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
 }
 
 const redisConfig = {
   host: 'localhost',
-  port: 6379
+  port: 6379,
 }
 
 if (process.env.NODE_ENV === 'production') {

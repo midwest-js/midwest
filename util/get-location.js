@@ -16,6 +16,6 @@ module.exports = (req) => {
     pathname,
     port,
     url: req.originalUrl,
-    search: query ? `?${query}` : ''
+    search: query ? `?${query}` : '',
   }
 }

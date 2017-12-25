@@ -23,7 +23,7 @@ module.exports = (count, defaultLimit = 20) => {
       res.locals.pagination = {
         offset: req.query.offset,
         limit: req.query.limit,
-        totalCount
+        totalCount,
       }
 
       next()

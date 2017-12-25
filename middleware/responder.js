@@ -62,7 +62,7 @@ const responses = {
     debug('res.template or res.master not set, sending JSON.')
 
     responses.json(res)
-  }
+  },
 }
 
 module.exports = function responder (req, res) {

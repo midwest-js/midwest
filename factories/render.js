@@ -23,7 +23,7 @@ module.exports = ({ h, render, Provider, createStore, store }) => {
 
       if (Provider && (store || createStore)) {
         dom = h(Provider, Object.assign({
-          store: store || createStore(locals)
+          store: store || createStore(locals),
         }), dom)
       }
 

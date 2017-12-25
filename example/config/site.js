@@ -19,23 +19,23 @@ const defaults = {
     robot: 'no-reply@thecodebureau.com',
     info: 'info@thecodebureau.com',
     webmaster: 'webmaster@thecodebureau.com',
-    order: 'info@thecodebureau.com'
-  }
+    order: 'info@thecodebureau.com',
+  },
 }
 
 module.exports = _.merge(defaults, {
   development: {
     hostname: 'localhost',
-    port: process.env.EXTERNAL_PORT || process.env.PORT || require('./port')
+    port: process.env.EXTERNAL_PORT || process.env.PORT || require('./port'),
   },
 
   testing: {
     hostname: 'localhost',
-    port: process.env.PORT || require('./port')
+    port: process.env.PORT || require('./port'),
   },
 
   staging: {
-    hostname: `staging.${domain}`
+    hostname: `staging.${domain}`,
   },
 
   production: {
@@ -45,7 +45,7 @@ module.exports = _.merge(defaults, {
       robot: `no-reply@${domain}`,
       info: `info@${domain}`,
       webmaster: `webmaster@${domain}`,
-      order: `order@${domain}`
-    }
-  }
+      order: `order@${domain}`,
+    },
+  },
 }[process.env.NODE_ENV])

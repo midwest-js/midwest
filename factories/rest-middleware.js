@@ -97,7 +97,7 @@ const factories = {
         next()
       }).catch(next)
     }
-  }
+  },
 }
 
 const all = Object.keys(factories)

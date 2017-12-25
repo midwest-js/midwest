@@ -104,7 +104,7 @@ const factories = {
       const {
         offset = defaults.offset,
         limit = defaults.limit,
-        sort = defaults.sort
+        sort = defaults.sort,
       } = json
 
       json = _.omit(json, 'limit', 'sort', 'offset')
@@ -222,7 +222,7 @@ const factories = {
         return result.rows[0]
       })
     }
-  }
+  },
 }
 
 const all = Object.keys(factories)
@@ -243,7 +243,7 @@ module.exports = ({ db, emitter, table, columns, exclude, include, camelCase = t
         columns,
         db,
         emitter,
-        table
+        table,
       })
     }
 

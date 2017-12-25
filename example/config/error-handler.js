@@ -12,13 +12,13 @@ const defaults = {
   },
 
   mystify: {
-    properties: ['errors', 'message', 'name', 'status', 'statusText']
+    properties: ['errors', 'message', 'name', 'status', 'statusText'],
   },
 
   log: {
     // if database = true there has to be a mongoose model name ErrorModel
-    ignore: []
-  }
+    ignore: [],
+  },
 }
 
 const ErrorModel = require('mongopot/models/error')
@@ -40,19 +40,19 @@ module.exports = _.merge(defaults, {
   development: {
     log: {
       store,
-      console: true
-    }
+      console: true,
+    },
   },
   testing: {
     log: {
       store: false,
-      console: false
-    }
+      console: false,
+    },
   },
   production: {
     log: {
       store,
-      console: false
-    }
-  }
+      console: false,
+    },
+  },
 }[process.env.NODE_ENV])
