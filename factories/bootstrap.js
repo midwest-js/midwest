@@ -11,7 +11,7 @@ const _ = require('lodash')
 
 const defaultOmit = ['settings']
 
-module.exports = function ({ pick, omit, property = 'INITIAL_STATE' }) {
+module.exports = function ({ pick, omit, property = 'INITIAL_STATE' } = {}) {
   if (!pick) {
     omit = omit ? defaultOmit.concat(omit) : defaultOmit
   }
