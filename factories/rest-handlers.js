@@ -2,8 +2,8 @@
 
 const _ = require('lodash')
 
-const { one, many } = require('easy-postgres/result')
-const sql = require('easy-postgres/sql-helpers')
+const { one, many } = require('@bmp/pg/result')
+const sql = require('@bmp/pg/sql-helpers')
 
 const factories = {
   count ({ db, table }) {
