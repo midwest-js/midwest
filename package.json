@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/thebitmill/midwest#readme",
   "dependencies": {
+    "@bmp/highlight-stack": "0.0.2",
     "chalk": "^2.0.1",
     "debug": "^2.6.8",
     "express": "^4.15.3",

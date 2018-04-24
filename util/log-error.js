@@ -16,7 +16,7 @@ const _ = require('lodash')
 const chalk = require('chalk')
 
 // modules > internal
-const colorizeStack = require('colorize-stack')
+const highlightStack = require('@bmp/highlight-stack')
 const formatError = require('./format-error')
 
 // string added to all errors logged to console
@@ -50,7 +50,7 @@ function defaultConsole (error, config) {
   }
 
   if (error.stack) {
-    console.error(`${prefix}${colorizeStack(error.stack.slice(error.stack.indexOf('\n') + 1)).trim()}\n`)
+    console.error(`${prefix}${highlightStack(error.stack.slice(error.stack.indexOf('\n') + 1)).trim()}\n`)
   }
 }
 
