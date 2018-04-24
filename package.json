@@ -1,6 +1,6 @@
 {
   "name": "midwest",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "Midwest Express is a collection of middleware and utils for Express. Kind of a modular CMS built on top of Express",
   "main": "midwest.js",
   "scripts": {
